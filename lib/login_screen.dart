@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+
+import 'layout.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -12,6 +15,8 @@ class LoginScreen extends StatefulWidget{
 }
 
 class _LoginScreenState extends State<LoginScreen>{
+
+  final _storage = const FlutterSecureStorage();
 
   final _loginfromkey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
@@ -23,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen>{
 
     String body = jsonEncode(data);
     Response response = await http.post(
-      Uri.parse('http://localhost/visite3000/login.php'),
+      Uri.parse('http://192.168.1.100:8001/visite3000/login.php'),
       body: body,
       headers: {
         'Content-Type': 'application/json',
@@ -34,22 +39,27 @@ class _LoginScreenState extends State<LoginScreen>{
     if (response.statusCode == 200)
     {
       dynamic jsonData = json.decode(response.body);
-      if (jsonData['status'] == true)
+      if (jsonData['status'] == 1)
       {
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (context) => const AlertDialog(
-                content: Text("Log OK"),
-              ));
+        _storage.write(key: "Token", value: jsonData['data']['Token']);
+        _storage.write(key: "UserId", value: jsonData['data']['Id']);
+
+        Future((){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Layout()
+            )
+          );
+        });
       }
       else
       {
         // ignore: use_build_context_synchronously
         showDialog(
           context: context,
-          builder: (context) => const AlertDialog(
-                content: Text("Log KO"),
+          builder: (context) => AlertDialog(
+                content: Text(jsonData['message']),
               ));
       }
     }

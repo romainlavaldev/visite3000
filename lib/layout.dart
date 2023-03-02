@@ -15,6 +15,7 @@ class Layout extends StatefulWidget
 class _LayoutState extends State<Layout>
 {
 
+
   final List<Widget> _pagesDestinationList = const [
     Wallet(),
     Share(),
@@ -27,6 +28,7 @@ class _LayoutState extends State<Layout>
   {
     setState(() {
       _selectedIndex = index;
+      
     });
   }
 

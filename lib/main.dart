@@ -1,16 +1,81 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:visite3000/login_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import 'layout.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget{
+
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyApp();
+}
+
+
+
+class _MyApp extends State<MyApp> {
+  final _storage = const FlutterSecureStorage();
+
+  late Future<Widget> _firstPage;
+
+  Future<Widget> _getPageFromTokenValue() async {
+
+    String? storedToken = await _storage.read(key: "Token");
+
+    if (storedToken == null){
+      //Not logged in
+      _storage.deleteAll();
+      return const LoginScreen();
+    }
+    else{
+      //Checking token
+      Map data = {'userId': await _storage.read(key: "UserId"), 'token': storedToken};
+
+      String body = jsonEncode(data);
+      Response response = await http.post(
+        Uri.parse('http://192.168.1.100:8001/visite3000/check_token.php'),
+        body: body,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      );
+
+      if (response.statusCode == 200){
+        dynamic jsonData = json.decode(response.body);
+        if (jsonData['status'] == 1){
+          //Token is correct
+          return const Layout();
+        } else {
+          //Token is incorrect
+          _storage.deleteAll();
+          return const LoginScreen();
+        }
+      }
+    }
+
+    return const LoginScreen();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _firstPage = _getPageFromTokenValue();
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Visite3000',
       theme: ThemeData(
@@ -25,7 +90,18 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.pink,
       ),
-      home: const LoginScreen(),
+      home: FutureBuilder(
+        future: _firstPage,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data as Widget;
+          }
+          else
+          {
+            return const Text('Loading');
+          }
+        },
+      ),
     );
   }
 }
