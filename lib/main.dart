@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:visite3000/login_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'layout.dart';
 
@@ -93,12 +94,17 @@ class _MyApp extends State<MyApp> {
       home: FutureBuilder(
         future: _firstPage,
         builder: (context, snapshot) {
+
           if (snapshot.hasData) {
             return snapshot.data as Widget;
           }
           else
           {
-            return const Text('Loading');
+            return const Scaffold(
+              body: Center(
+                child: Text("Loading"),
+              ),
+            );              
           }
         },
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:visite3000/main.dart';
 import 'package:visite3000/my_cards.dart';
 import 'package:visite3000/share.dart';
 import 'package:visite3000/wallet.dart';
@@ -15,6 +17,13 @@ class Layout extends StatefulWidget
 class _LayoutState extends State<Layout>
 {
 
+  final _storage = const FlutterSecureStorage();
+
+  void _logOut(){
+    _storage.deleteAll();
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const MyApp()));
+  }
 
   final List<Widget> _pagesDestinationList = const [
     Wallet(),
@@ -37,6 +46,17 @@ class _LayoutState extends State<Layout>
     return Scaffold(
       appBar: AppBar(
         title: const Text("Layout"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: _logOut,
+              child: const Icon(
+                Icons.power_settings_new_outlined
+              ),
+            ),
+          )
+        ],
       ),
       body: _pagesDestinationList[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
