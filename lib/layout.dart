@@ -37,7 +37,6 @@ class _LayoutState extends State<Layout>
   {
     setState(() {
       _selectedIndex = index;
-      
     });
   }
 
