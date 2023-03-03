@@ -61,12 +61,14 @@ class _LoginScreenState extends State<LoginScreen>{
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                content: Text(
-                  jsonData['message'],
-                  textAlign: TextAlign.center,
-                ),
-                icon: const Icon(Icons.person_off_outlined),
-              ));
+              elevation: 0,
+              content: Text(
+                jsonData['message'],
+                textAlign: TextAlign.center,
+              ),
+              icon: const Icon(Icons.person_off_outlined),
+            )
+          );
       }
     }
   }
@@ -143,6 +145,7 @@ class _LoginScreenState extends State<LoginScreen>{
                                 controller: passwordController,
                                 obscureText: !_isPasswordVisible,
                                 keyboardType: TextInputType.visiblePassword,
+                                onEditingComplete: _tryLogin,
                                 decoration: InputDecoration(
                                   hintText: "Password",
                                   suffixIcon: IconButton(

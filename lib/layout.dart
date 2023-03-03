@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:visite3000/main.dart';
 import 'package:visite3000/my_cards.dart';
+import 'package:visite3000/settings.dart';
 import 'package:visite3000/share.dart';
 import 'package:visite3000/wallet.dart';
 
@@ -52,6 +53,15 @@ class _LayoutState extends State<Layout>
               onTap: _logOut,
               child: const Icon(
                 Icons.power_settings_new_outlined
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (builder) => const Settings())),
+              child: const Icon(
+                Icons.settings
               ),
             ),
           )
