@@ -100,9 +100,27 @@ class _MyApp extends State<MyApp> {
           }
           else
           {
-            return const Scaffold(
+            return Scaffold(
+              backgroundColor: Colors.pink,
               body: Center(
-                child: Text("Loading"),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    SpinKitCubeGrid(
+                      color: Colors.white,
+                      size: 60,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Loading...",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    )
+                  ],
+                ),
               ),
             );              
           }
