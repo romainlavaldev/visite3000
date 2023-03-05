@@ -4,7 +4,7 @@ import 'package:visite3000/main.dart';
 import 'package:visite3000/my_cards.dart';
 import 'package:visite3000/settings.dart';
 import 'package:visite3000/share.dart';
-import 'package:visite3000/wallet.dart';
+import 'package:visite3000/views/wallet/wallet.dart';
 
 class Layout extends StatefulWidget
 {

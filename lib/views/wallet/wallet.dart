@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+import 'package:visite3000/views/wallet/single_card.dart';
 
 class Wallet extends StatefulWidget
 {
@@ -37,9 +37,7 @@ class _WalletState extends State<Wallet>
       List<Widget> cards = <Widget>[];
 
       for (dynamic card in jsonData['data']) {
-        Widget cardWidget = Text("Card ${card['CardId']} from user ${card['CardOwner']}");
-      
-        cards.add(cardWidget);
+        cards.add(SingleCard(int.parse(card['CardId'])));
       }
 
       _cardList = cards;
@@ -58,7 +56,16 @@ class _WalletState extends State<Wallet>
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: _cardList
+      children: _cardList.map((cardWidget) => 
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 15,
+            right: 15,
+            top: 15
+          ),
+          child: cardWidget,
+        )
+      ).toList()
     );
   }
 }
