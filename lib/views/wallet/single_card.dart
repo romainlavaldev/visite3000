@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'package:visite3000/globals.dart' as globals;
+
 
 
 class SingleCard extends StatefulWidget{
@@ -29,7 +31,7 @@ class _SingleCardState extends State<SingleCard> {
   @override
   void initState() {
     super.initState();
-    cardImage = Image(image: NetworkImage("http://192.168.1.100:8001/visite3000/cards/${widget._cardId}.png"));
+    cardImage = Image(image: NetworkImage("${globals.serverEntryPoint}/cards/${widget._cardId}.png"));
   }
 
   @override

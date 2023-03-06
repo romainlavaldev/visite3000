@@ -8,6 +8,8 @@ import 'package:visite3000/login_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import 'globals.dart' as globals;
+
 void main() {
   runApp(const MyApp());
 }
@@ -42,7 +44,7 @@ class _MyApp extends State<MyApp> {
 
       String body = jsonEncode(data);
       Response response = await http.post(
-        Uri.parse('http://192.168.1.100:8001/visite3000/check_token.php'),
+        Uri.parse('${globals.serverEntryPoint}/db/check_token.php'),
         body: body,
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +64,6 @@ class _MyApp extends State<MyApp> {
         }
       }
     }
-
     return const LoginScreen();
   }
 

@@ -5,6 +5,8 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:visite3000/views/wallet/single_card.dart';
 
+import 'package:visite3000/globals.dart' as globals;
+
 class Wallet extends StatefulWidget
 {
   const Wallet({super.key});
@@ -23,7 +25,7 @@ class _WalletState extends State<Wallet>
     String body = jsonEncode(data);
     
     Response response = await http.post(
-      Uri.parse('http://192.168.1.100:8001/visite3000/get_user_cards.php'),
+      Uri.parse('${globals.serverEntryPoint}/db/get_user_cards.php'),
       body: body,
       headers: {
         'Content-Type': 'application/json',
@@ -36,8 +38,8 @@ class _WalletState extends State<Wallet>
 
       List<Widget> cards = <Widget>[];
 
-      for (dynamic card in jsonData['data']) {
-        cards.add(SingleCard(int.parse(card['CardId'])));
+      for (dynamic card in jsonData['datas']) {
+        cards.add(SingleCard(int.parse(card['cardId'])));
       }
 
       _cardList = cards;

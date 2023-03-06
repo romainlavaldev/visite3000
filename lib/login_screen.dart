@@ -7,6 +7,8 @@ import 'package:http/http.dart';
 import 'package:visite3000/layout.dart';
 import 'package:visite3000/sign_up.dart';
 
+import 'globals.dart' as globals;
+
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
 
@@ -30,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen>{
 
     String body = jsonEncode(data);
     Response response = await http.post(
-      Uri.parse('http://192.168.1.100:8001/visite3000/login.php'),
+      Uri.parse('${globals.serverEntryPoint}/db/login.php'),
       body: body,
       headers: {
         'Content-Type': 'application/json',
@@ -43,8 +45,8 @@ class _LoginScreenState extends State<LoginScreen>{
       dynamic jsonData = json.decode(response.body);
       if (jsonData['status'] == 1)
       {
-        _storage.write(key: "Token", value: jsonData['data']['Token']);
-        _storage.write(key: "UserId", value: jsonData['data']['Id']);
+        _storage.write(key: "Token", value: jsonData['datas']['token']);
+        _storage.write(key: "UserId", value: jsonData['datas']['id']);
 
         Future((){
           Navigator.pushReplacement(
