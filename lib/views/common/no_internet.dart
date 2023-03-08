@@ -38,8 +38,8 @@ class NoInternet extends StatelessWidget{
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Column(
-                      children: [
+                    Column(
+                      children: const [
                         Text(
                           "Oops ! No internet connection",
                           style: TextStyle(

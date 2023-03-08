@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';  
 import 'package:visite3000/layout.dart';
@@ -12,7 +13,11 @@ import 'globals.dart' as globals;
 
 void main() {
   runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 }
+
+
 
 class MyApp extends StatefulWidget{
 
@@ -100,12 +105,12 @@ class _MyApp extends State<MyApp> {
           }
           else
           {
-            return const Scaffold(
+            return Scaffold(
               backgroundColor: Colors.pink,
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: const [
                     SpinKitCubeGrid(
                       color: Colors.white,
                       size: 60,

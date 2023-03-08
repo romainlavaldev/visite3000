@@ -200,9 +200,9 @@ class _LoginScreenState extends State<LoginScreen>{
                                   borderRadius: BorderRadius.all(Radius.circular(30))
                                 )
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
+                                children: const [
                                   Text("Login"),
                                   Icon(Icons.arrow_right_alt_rounded)
                                 ],
@@ -255,10 +255,11 @@ class _LoginScreenState extends State<LoginScreen>{
             ),
             child: Container(
               color: Colors.black.withOpacity(0.1),
-              child: const SpinKitSpinningLines(
-                itemCount: 5,
-                color: Colors.pink,
-                size: 60,
+              child: Center(
+                child: const SpinKitCubeGrid(
+                  color: Colors.pink,
+                  size: 60,
+                ),
               ),
             ),
           ),
