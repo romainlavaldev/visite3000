@@ -6,13 +6,15 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:visite3000/views/common/no_internet.dart';
 
-import 'globals.dart' as globals;
-import 'layout.dart';
+import 'package:visite3000/globals.dart' as globals;
+
+import '../../layout.dart';
 
 class LoginFormPart extends StatefulWidget{
-  Function setIsLoading;
-  LoginFormPart({super.key, required this.setIsLoading});
+  final Function setIsLoading;
+  const LoginFormPart({super.key, required this.setIsLoading});
   
+  @override
   State<LoginFormPart> createState() => _LoginFormPartState();
 }
 

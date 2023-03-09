@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'package:visite3000/layout.dart';
-import 'package:visite3000/login_screen.dart';
+
+import 'login_screen.dart';
 
 class SignUp extends StatefulWidget{
   const SignUp({super.key});
