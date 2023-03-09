@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:shake/shake.dart';
 import 'package:visite3000/views/connection/sign_up.dart';
 import 'package:visite3000/views/connection/sign_up_form_part.dart';
 import 'package:wave/config.dart';
@@ -20,25 +19,13 @@ class LoginScreen extends StatefulWidget{
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin{
 
   late AnimationController waveHeigthController;
-  late ShakeDetector shakeDetector;
-  double waveAmplitude = 5;
-  int sec = 10;
 
   @override
   void initState() {
     super.initState();
 
-    shakeDetector = ShakeDetector.autoStart(
-    onPhoneShake: () {
-          setState(() {
-            waveAmplitude = 450;
-            sec = 1;
-          });
-        },
-    );
-
     waveHeigthController = AnimationController(
-      duration: Duration(seconds: sec),
+      duration: const Duration(seconds: 10),
       vsync: this,
     )
     ..forward()
@@ -61,7 +48,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     // TODO: implement dispose
     super.dispose();
     waveHeigthController.dispose();
-    shakeDetector.stopListening();
   }
 
   bool _isLoading = false;
@@ -95,20 +81,23 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               child: WaveWidget(
               config: CustomConfig(
                 colors: [
+                  Colors.yellow.withOpacity(0.3),
+                  Colors.yellow.withOpacity(0.5),
                   Colors.yellow.withOpacity(0.8),
-                  Colors.yellow,
                 ],
                 durations: [
-                  7000,
-                  4000,
+                  15000,
+                  12000,
+                  10000,
                 ],
                 heightPercentages: [
+                  0.70,
+                  0.73,
                   0.75,
-                  0.80,
                 ]
               ),
-              size: const Size(double.infinity, double.infinity),
-              waveAmplitude: waveAmplitude,
+              size: const Size(double.maxFinite, double.maxFinite),
+              waveAmplitude: 5,
             ),
             )
           ),
@@ -127,7 +116,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontSize: 40
+                    fontSize: 40,
+                    fontFamily: "Reality Hyper"
                   ),
                 ),
                 Column(

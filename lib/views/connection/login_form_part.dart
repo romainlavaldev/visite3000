@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:visite3000/views/common/no_internet.dart';
 
 import 'package:visite3000/globals.dart' as globals;
+import 'package:wave/config.dart';
+import 'package:wave/wave.dart';
 
 import '../../layout.dart';
 
