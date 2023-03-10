@@ -103,8 +103,8 @@ class _NoInternetState extends State<NoInternet> with SingleTickerProviderStateM
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Column(
-                          children: [
+                        Column(
+                          children: const [
                             Text(
                               "Oops ! No internet connection",
                               style: TextStyle(

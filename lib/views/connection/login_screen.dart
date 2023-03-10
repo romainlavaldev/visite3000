@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shake/shake.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:visite3000/views/connection/sign_up.dart';
 import 'package:visite3000/views/connection/sign_up_form_part.dart';
 import 'package:wave/config.dart';
@@ -16,13 +19,41 @@ class LoginScreen extends StatefulWidget{
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin{
+class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin{
 
   late AnimationController waveHeigthController;
+
+  late AnimationController waveShakeFluidHeigth = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+      lowerBound: 0.6,
+      upperBound: 0.7
+    );
+
+  late ShakeDetector shakeDetector;
+
+  bool isWaveLockedAtTop = false;
+
+  bool _isLoading = false;
+  bool isLoginForm = true;
+  bool isResetingWaveHeigth = false;
+
+  dynamic waveStopWatchTime;
+
+  final waveStopWatch = StopWatchTimer(
+    mode: StopWatchMode.countUp,
+  );
+
 
   @override
   void initState() {
     super.initState();
+
+    shakeDetector = ShakeDetector.autoStart(
+    onPhoneShake: () {
+          shakePhone();
+        },
+    );
 
     waveHeigthController = AnimationController(
       duration: const Duration(seconds: 10),
@@ -34,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         waveHeigthController.repeat();
       }
     });
-    
   }
 
   double shake(double value) {
@@ -43,15 +73,81 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       return Curves.easeInOut.transform(tmp);
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    waveHeigthController.dispose();
+  double heigthCompute(double value, lower, upper) {
+    return ((upper + lower) / 2 - value) + (upper + lower) / 2;
   }
 
-  bool _isLoading = false;
-  bool isLoginForm = true;
+  Timer shakeReset = Timer(Duration.zero, () { });
+  shakePhone(){
+
+    if (shakeDetector.mShakeCount == 1){
+      waveStopWatch.onStartTimer();
+    }
+
+    shakeReset.cancel();
+
+    waveShakeFluidHeigth.forward().then((value) {
+      waveShakeFluidHeigth = AnimationController(
+        duration: const Duration(milliseconds: 600),
+        vsync: this,
+        lowerBound: waveShakeFluidHeigth.lowerBound - 0.1,
+        upperBound: waveShakeFluidHeigth.upperBound - 0.1
+      );
+
+      if(waveShakeFluidHeigth.value <= -0.2){
+
+        waveStopWatch.onStopTimer();
+        shakeDetector.stopListening();
+        isWaveLockedAtTop = true;
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              elevation: 0,
+              content: Text(
+                "C'EST GAGNE, TEMPS : ${StopWatchTimer.getDisplayTime(waveStopWatch.rawTime.value)}",
+                textAlign: TextAlign.center,
+              ),
+              icon: const Icon(Icons.person_off_outlined),
+            )
+          );
+      } else {
+        shakeReset = Timer(const Duration(seconds: 2), (){
+          resetWaveHeigth();
+        });
+      }
+    });
+    
+  }
+
+  resetWaveHeigth(){
+    isResetingWaveHeigth = true;
+    waveShakeFluidHeigth = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+      lowerBound: waveShakeFluidHeigth.upperBound,
+      upperBound: 0.7
+    );
+    waveShakeFluidHeigth
+      .forward()
+      .then((_) { 
+        isResetingWaveHeigth = false;
+        waveShakeFluidHeigth = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+      lowerBound: 0.6,
+      upperBound: 0.7
+    );
+    });
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    waveHeigthController.dispose();
+    await waveStopWatch.dispose();
+  }
+
 
   _signUp(){
     Navigator.push(context, MaterialPageRoute(builder: (builder) => const SignUp()));
@@ -72,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       body: Stack(
         children: [
           AnimatedBuilder(
-            animation: waveHeigthController,
+            animation: Listenable.merge([waveHeigthController, waveShakeFluidHeigth]),
             builder: (context, child) => Transform.translate(
               offset: Offset(
                 0,
@@ -90,14 +186,22 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   12000,
                   10000,
                 ],
-                heightPercentages: [
-                  0.70,
-                  0.73,
-                  0.75,
-                ]
+                heightPercentages: 
+                  isResetingWaveHeigth ?
+                  [
+                    waveShakeFluidHeigth.value,
+                    waveShakeFluidHeigth.value + 0.03,
+                    waveShakeFluidHeigth.value + 0.06
+                  ]
+                   : 
+                  [
+                    heigthCompute(waveShakeFluidHeigth.value, waveShakeFluidHeigth.upperBound, waveShakeFluidHeigth.lowerBound),
+                    heigthCompute(waveShakeFluidHeigth.value, waveShakeFluidHeigth.upperBound, waveShakeFluidHeigth.lowerBound) + 0.03,
+                    heigthCompute(waveShakeFluidHeigth.value, waveShakeFluidHeigth.upperBound, waveShakeFluidHeigth.lowerBound) + 0.06
+                  ]
               ),
-              size: const Size(double.maxFinite, double.maxFinite),
-              waveAmplitude: 5,
+              size: const Size(double.infinity, double.infinity),
+              waveAmplitude: 10,
             ),
             )
           ),

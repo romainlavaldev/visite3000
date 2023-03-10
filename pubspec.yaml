@@ -41,6 +41,8 @@ dependencies:
   animated_styled_widget: ^0.4.6
   wave: ^0.2.2
   sensors_plus: ^1.4.1
+  shake: ^2.2.0
+  stop_watch_timer: ^2.0.0
 
 dev_dependencies:
   flutter_test:
