@@ -87,7 +87,7 @@ class _WaveBackgroundState extends State<WaveBackground> with TickerProviderStat
         waveStopWatch.onStopTimer();
         shakeDetector.stopListening();
         isWaveLockedAtTop = true;
-        
+
         widget.winGame(waveStopWatch.rawTime.value);
 
       } else {
@@ -107,6 +107,7 @@ class _WaveBackgroundState extends State<WaveBackground> with TickerProviderStat
 
   resetWaveHeigth(){
     isResetingWaveHeigth = true;
+    waveStopWatch.onResetTimer();
     waveHeightController = AnimationController(
       duration: Duration(milliseconds: (200 * shakeDetector.mShakeCount).round()),
       vsync: this,

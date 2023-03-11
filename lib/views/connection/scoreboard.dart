@@ -15,7 +15,7 @@ class ScoreBoard extends StatefulWidget{
 
 class _ScoreBoardState extends State<ScoreBoard> {
 
-  List<Widget> scoreList = List<Widget>.empty();
+  List<Widget> scoreList = <Widget>[];
 
   Future<void> getScoreboard() async {
     
@@ -30,7 +30,9 @@ class _ScoreBoardState extends State<ScoreBoard> {
     if (response.statusCode == 200){
       dynamic jsonData = json.decode(response.body);
 
+      
       for (dynamic score in jsonData['datas']) {
+        
         scoreList.add(Text("name : ${score['name']} - ${score['displayTime']}"));
       }
     }
@@ -49,8 +51,24 @@ class _ScoreBoardState extends State<ScoreBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.pink,
       body: ListView(
-        children: scoreList,
+        children: scoreList.map((score) => 
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 15,
+            right: 15,
+            top: 3
+          ),
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: score,
+            )
+          ),
+        )
+      ).toList(),
       ),
     );
   }
