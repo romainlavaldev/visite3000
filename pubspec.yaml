@@ -43,6 +43,7 @@ dependencies:
   sensors_plus: ^1.4.1
   shake: ^2.2.0
   stop_watch_timer: ^2.0.0
+  sensors: ^2.0.3
 
 dev_dependencies:
   flutter_test:

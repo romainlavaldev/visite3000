@@ -50,6 +50,7 @@ class _LoginFormPartState extends State<LoginFormPart>{
         }
       );
     } catch(e){
+      print(e);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const NoInternet()));
       return;
     }
