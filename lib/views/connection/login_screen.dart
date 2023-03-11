@@ -7,6 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:visite3000/views/connection/scoreboard.dart';
 import 'package:visite3000/views/connection/sign_up.dart';
 import 'package:visite3000/views/connection/sign_up_form_part.dart';
 import 'package:visite3000/views/connection/wave_background.dart';
@@ -72,8 +73,9 @@ class _LoginScreenState extends State<LoginScreen>{
             child: Text('Save'),
             onPressed: () {
               setState(() {
-                print(gameNameController.text);
+                sendScoreToDatabase();
                 isGameScoreSaved = true;
+                
                 Navigator.pop(context);
               });
             },
@@ -87,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen>{
     Map data = {'name': gameNameController.text, 'time': gameTime, 'displayTime': StopWatchTimer.getDisplayTime(gameTime)};
 
     String body = jsonEncode(data);
-
+    print(body);
     await Future.delayed(const Duration(seconds: 2), (){});
 
       Response response;
@@ -100,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen>{
             'Access-Control-Allow-Origin': '*'
           }
         );
-      } catch(e){
+      } catch(e) {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const NoInternet()));
         return;
       }
@@ -255,6 +257,18 @@ class _LoginScreenState extends State<LoginScreen>{
                   )
                 ],
               ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white
+              ),
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (builder) {return ScoreBoard();}));
+              },
+              child: Text("Scoreboard"),
             ),
           )
         ],
