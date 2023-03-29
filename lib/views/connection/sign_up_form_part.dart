@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:visite3000/views/common/no_internet.dart';
+
+import 'package:visite3000/globals.dart' as globals;
 
 class SignUpFormPart extends StatefulWidget{
   const SignUpFormPart({super.key});
@@ -9,10 +15,10 @@ class SignUpFormPart extends StatefulWidget{
 }
 
 class _SignUpFormPartState extends State<SignUpFormPart>{
-  final _storage = const FlutterSecureStorage();
-
   final _loginfromkey = GlobalKey<FormState>();
 
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -22,11 +28,60 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
 
   Future<void> _trySignup() async {
 
-    Map data = {'username': usernameController.text, 'email': emailController.text, 'password': passwordController.text, 'passwordConfirm': passwordConfirmController.text};
-
-    if (passwordController.text != passwordConfirmController.text)
+    if (passwordController.text != passwordConfirmController.text || !isValidEmail(emailController.text))
     {
       return;
+    }
+
+    Map data = {'firstName': firstNameController.text, 
+                'lastName': lastNameController.text, 
+                'username': usernameController.text, 
+                'email': emailController.text, 
+                'password': passwordController.text
+                };
+
+    String body = jsonEncode(data);
+
+    await Future.delayed(const Duration(seconds: 2), (){});
+
+    Response response;
+    try
+    {
+      response = await http.post(
+        Uri.parse('${globals.serverEntryPoint}/db/signup.php'),
+        body: body,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      );
+    } catch(e){
+      print(e);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const NoInternet()));
+      return;
+    }
+
+    if(response.statusCode == 200)
+    {
+    dynamic jsonData = json.decode(response.body);
+      if (jsonData['status'] == 1)
+      {
+      }
+      else
+      {
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              elevation: 0,
+              content: Text(
+                jsonData['message'],
+                textAlign: TextAlign.center,
+              ),
+              icon: const Icon(Icons.person_off_outlined),
+            )
+          );
+      }
     }
   }
 
@@ -61,6 +116,32 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
           key: _loginfromkey,
           child: Column(
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: firstNameController,
+                      decoration: const InputDecoration(
+                        hintText: "First Name",
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: lastNameController,
+                      decoration: const InputDecoration(
+                        hintText: "Last Name",
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: usernameController,
                 decoration: const InputDecoration(
@@ -68,7 +149,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               TextFormField(
                 controller: emailController,
@@ -84,7 +165,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                 },
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               TextFormField(
                 controller: passwordController,
@@ -106,7 +187,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               TextFormField(
                 controller: passwordConfirmController,
@@ -139,7 +220,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
           ),
         ),
         const SizedBox(
-          height: 60,
+          height: 45,
         ),
         TextButton(
           onPressed: (){

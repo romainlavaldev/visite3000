@@ -8,13 +8,13 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:visite3000/views/connection/scoreboard.dart';
-import 'package:visite3000/views/connection/sign_up.dart';
 import 'package:visite3000/views/connection/sign_up_form_part.dart';
 import 'package:visite3000/views/connection/wave_background.dart';
 
 import 'package:visite3000/globals.dart' as globals;
 import '../common/no_internet.dart';
 import 'login_form_part.dart';
+
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -31,10 +31,6 @@ class _LoginScreenState extends State<LoginScreen>{
   bool isGameScoreSaved = false;
   late int gameTime;
   TextEditingController gameNameController = TextEditingController();
-
-  _signUp(){
-    Navigator.push(context, MaterialPageRoute(builder: (builder) => const SignUp()));
-  }
 
   setIsLoading(bool isLoading){
     setState(() {
@@ -215,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen>{
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Column(
+                  Column(
                     children: [
                       Text(
                         "You won the game !",
