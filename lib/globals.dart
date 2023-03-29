@@ -2,7 +2,7 @@ library visite3000.globals;
 
 import 'package:flutter/cupertino.dart';
 
-String serverEntryPoint = "http://192.168.51.70/visite3000";
+String serverEntryPoint = "http://192.168.1.89:81";
 
 class MyBehavior extends ScrollBehavior {
   @override

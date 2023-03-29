@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visite3000/globals.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -59,14 +60,31 @@ class _CardDetailsState extends State<CardDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.pink,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Image(
-              image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
-            ),
-            Expanded(
-              child: Container(
+      body: FutureBuilder(
+        future: getCardDatas(),
+        builder: (context, snapshot) {
+          return snapshot.hasData ? SafeArea(
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Image(
+                    image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.yellow,
+                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(20))
+                    ),
+                    child: IconButton(
+                      onPressed: () => Navigator.pop(context), 
+                      icon: const Icon(Icons.arrow_back),
+                      iconSize: 25,
+                    ),
+                  )
+                ],
+              ),
+              Container(
                 color: Colors.pink,
                 width: double.infinity,
                 child: Padding(
@@ -76,27 +94,28 @@ class _CardDetailsState extends State<CardDetails> {
                     top: 5
                   ),
                   child: SingleChildScrollView(
-                    child: FutureBuilder(
-                      future: getCardDatas(),
-                      builder: (context, snapshot) {
-                        return Column(
-                          children: snapshot.hasData ? 
-                          [
-                            CardFormEntryReadOnly(title: "Firstname", value: snapshot.data!.firstname),
-                            CardFormEntryReadOnly(title: "Lastname", value: snapshot.data!.lastName),
-                            CardFormEntryReadOnly(title: "Role", value: snapshot.data!.role),
-                            CardFormEntryReadOnly(title: "Phone", value: snapshot.data!.phone, isPhone: true,),
-                            CardFormEntryReadOnly(title: "Mail", value: snapshot.data!.mail, isMail: true,),
-                          ] : []
-                        );
-                      }
-                    ),
+                    child: Column(
+                      children: [
+                        CardFormEntryReadOnly(title: "Firstname", value: snapshot.data!.firstname),
+                        CardFormEntryReadOnly(title: "Lastname", value: snapshot.data!.lastName),
+                        CardFormEntryReadOnly(title: "Role", value: snapshot.data!.role),
+                        CardFormEntryReadOnly(title: "Phone", value: snapshot.data!.phone, isPhone: true,),
+                        CardFormEntryReadOnly(title: "Mail", value: snapshot.data!.mail, isMail: true,),
+                      ]
+                    )
                   ),
                 ),
-              ),
-            )
-          ],
-        ),
+              )
+            ],
+          ),
+        ) : const Align(
+            alignment: Alignment.center,
+            child: SpinKitCubeGrid(
+              color: Colors.white,
+              size: 60,
+            ),
+          );
+        }
       ),
     );
   }
@@ -180,12 +199,17 @@ class CardFormEntryReadOnly extends StatelessWidget{
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      color: Colors.yellow,
-                      fontWeight: FontWeight.bold
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          color: Colors.yellow,
+                          fontWeight: FontWeight.bold
+                        )
+                      ),
                     ),
                   ),
                   Row(

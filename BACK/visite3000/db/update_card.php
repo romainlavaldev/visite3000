@@ -4,7 +4,7 @@
     require_once "GetConn.php";
     $mysqlCon = GetConn();
 	
-    $query = "INSERT INTO gameScores (name, gameScores.time, displayTime) VALUES ('$postdata->name',$postdata->time, '$postdata->displayTime')";
+    $query = "UPDATE cards SET role='$postdata->role', phone='$postdata->phone', mail='$postdata->mail' WHERE id=$postdata->cardId;";
 
     $mysqlCon->query($query);
 ?>

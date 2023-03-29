@@ -12,6 +12,8 @@ class _ShareState extends State<Share>
 {
   @override
   Widget build(BuildContext context) {
-    return const Text("Ca partage ici ou quoi ????");
+    return Scaffold(
+      backgroundColor: Colors.pink
+    );
   }
 }
