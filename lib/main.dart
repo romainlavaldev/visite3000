@@ -84,6 +84,7 @@ class _MyApp extends State<MyApp> {
 
     return MaterialApp(
       title: 'Visite3000',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //

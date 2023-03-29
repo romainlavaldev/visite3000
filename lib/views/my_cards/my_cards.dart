@@ -18,7 +18,6 @@ class MyCards extends StatefulWidget{
 class _MyCardsState extends State<MyCards> {
   final _storage = const FlutterSecureStorage();
 
-
   Future<List<MyCardTile>> getUserCards() async {
     Map data = {'userId': await _storage.read(key: "UserId")};
     String body = jsonEncode(data);

@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:visite3000/main.dart';
 import 'package:visite3000/settings.dart';
 import 'package:visite3000/share.dart';
+import 'package:visite3000/views/common/scanner.dart';
 import 'package:visite3000/views/my_cards/my_cards.dart';
 import 'package:visite3000/views/wallet/wallet.dart';
 
@@ -25,6 +26,10 @@ class _LayoutState extends State<Layout>
     _storage.deleteAll();
 
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const MyApp()));
+  }
+
+  void _addCard(context){
+    Navigator.push(context, MaterialPageRoute(builder: (builder) => Scanner()));
   }
 
   final List<Widget> _pagesDestinationList = const [
@@ -61,6 +66,15 @@ class _LayoutState extends State<Layout>
           child: Image.asset("assets/icons/Logo-Visite3000-Splash.png"),
         ),
         actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: () => _addCard(context),
+              child: const Icon(
+                Icons.add
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
