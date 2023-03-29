@@ -72,9 +72,13 @@ class _CardDetailsState extends State<CardDetails> {
                     image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
                   ),
                   Container(
+                    margin: const EdgeInsets.only(
+                      top: 10,
+                      left: 10
+                    ),
                     decoration: const BoxDecoration(
                       color: Colors.yellow,
-                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(20))
+                      borderRadius: BorderRadius.all(Radius.circular(20))
                     ),
                     child: IconButton(
                       onPressed: () => Navigator.pop(context), 
@@ -96,8 +100,8 @@ class _CardDetailsState extends State<CardDetails> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        CardFormEntryReadOnly(title: "Firstname", value: snapshot.data!.firstname),
-                        CardFormEntryReadOnly(title: "Lastname", value: snapshot.data!.lastName),
+                        CardFormEntryReadOnly(title: "First Name", value: snapshot.data!.firstname),
+                        CardFormEntryReadOnly(title: "Last Name", value: snapshot.data!.lastName),
                         CardFormEntryReadOnly(title: "Role", value: snapshot.data!.role),
                         CardFormEntryReadOnly(title: "Phone", value: snapshot.data!.phone, isPhone: true,),
                         CardFormEntryReadOnly(title: "Mail", value: snapshot.data!.mail, isMail: true,),
@@ -182,20 +186,25 @@ class CardFormEntryReadOnly extends StatelessWidget{
             title,
             style: const TextStyle(
               fontSize: 20,
-              color: Colors.white
+              color: Colors.white,
+              fontWeight: FontWeight.bold
             ),
           ),
           const SizedBox(
-            height: 10,
+            height: 5,
           ),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 197, 25, 82),
-              borderRadius: BorderRadius.circular(5)
+              border: Border.all(
+                color: Colors.yellow.withOpacity(0.75),
+                width: 3
+              ),
+              borderRadius: BorderRadius.circular(13)
             ),
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.only(top: 5, bottom: 5, left: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -205,10 +214,9 @@ class CardFormEntryReadOnly extends StatelessWidget{
                       child: Text(
                         value,
                         style: const TextStyle(
-                          fontSize: 22,
-                          color: Colors.yellow,
-                          fontWeight: FontWeight.bold
-                        )
+                          fontSize: 20,
+                          color: Colors.white
+                        ),
                       ),
                     ),
                   ),

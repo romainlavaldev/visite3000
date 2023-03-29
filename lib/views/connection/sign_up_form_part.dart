@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:visite3000/views/common/no_internet.dart';
@@ -129,6 +130,9 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                     child: TextFormField(
                       controller: firstNameController,
                       textCapitalization: TextCapitalization.words,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(50)
+                      ],
                       decoration: const InputDecoration(
                         hintText: "First Name",
                       ),
@@ -141,6 +145,9 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                     child: TextFormField(
                       controller: lastNameController,
                       textCapitalization: TextCapitalization.words,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(50)
+                      ],
                       decoration: const InputDecoration(
                         hintText: "Last Name",
                       ),
@@ -154,6 +161,9 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
               TextFormField(
                 controller: usernameController,
                 textCapitalization: TextCapitalization.words,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(50)
+                ],
                 decoration: const InputDecoration(
                   hintText: "Username"
                 ),
@@ -163,6 +173,10 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
               ),
               TextFormField(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(80)
+                ],
                 decoration: const InputDecoration(
                   hintText: "Email"
                 ),
@@ -181,6 +195,9 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                 controller: passwordController,
                 obscureText: !_isPasswordVisible,
                 keyboardType: TextInputType.visiblePassword,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(50)
+                ],
                 decoration: InputDecoration(
                   hintText: "Password",
                   suffixIcon: IconButton(
@@ -203,6 +220,9 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                 controller: passwordConfirmController,
                 obscureText: !_isPasswordConfirmVisible,
                 keyboardType: TextInputType.visiblePassword,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(50)
+                ],
                 onEditingComplete: _trySignup,
                 decoration: InputDecoration(
                   hintText: "Confirm Password",

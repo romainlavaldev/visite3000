@@ -154,13 +154,13 @@ class CardEdit extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(
-                            height: 40,
+                            height: 60,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              TextButton(
-                                style: TextButton.styleFrom(
+                              ElevatedButton(
+                                style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.white,
                                   fixedSize: const Size(120, 50),
                                   shape: const RoundedRectangleBorder(
@@ -171,14 +171,18 @@ class CardEdit extends StatelessWidget {
                                 child: const Text(
                                   "Cancel",
                                   style: TextStyle(
-                                    fontSize: 25
+                                    fontSize: 25,
+                                    color: Colors.pink
                                   ),
                                 )
                               ),
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Colors.yellow,
+                              ElevatedButton(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
                                   fixedSize: const Size(120, 50),
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(255, 255, 230, 0),
+                                    width: 7),
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(30))
                                   )
@@ -205,7 +209,8 @@ class CardEdit extends StatelessWidget {
                                 child: const Text(
                                   "Save",
                                   style: TextStyle(
-                                    fontSize: 25
+                                    fontSize: 25,
+                                    color: Colors.pink
                                   ),
                                 )
                               )
@@ -255,17 +260,22 @@ class CardFormEntryEdit extends StatelessWidget{
             title,
             style: const TextStyle(
               fontSize: 20,
-              color: Colors.white
+              color: Colors.white,
+              fontWeight: FontWeight.bold
             ),
           ),
           const SizedBox(
-            height: 10,
+            height: 5,
           ),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 197, 25, 82),
-              borderRadius: BorderRadius.circular(5)
+              border: Border.all(
+                color: Colors.yellow.withOpacity(0.75),
+                width: 3
+              ),
+              borderRadius: BorderRadius.circular(13)
             ),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -274,8 +284,7 @@ class CardFormEntryEdit extends StatelessWidget{
                 decoration: null,
                 style: const TextStyle(
                   fontSize: 22,
-                  color: Colors.yellow,
-                  fontWeight: FontWeight.bold
+                  color: Colors.white,
                 ),
                 controller: controller,
               )

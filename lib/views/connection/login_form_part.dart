@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -118,6 +119,9 @@ class _LoginFormPartState extends State<LoginFormPart>{
               children: [
                 TextFormField(
                   controller: usernameController,
+                  inputFormatters: [ 
+                    LengthLimitingTextInputFormatter(50)
+                  ],
                   decoration: const InputDecoration(
                     hintText: "Username"
                   ),
@@ -129,6 +133,9 @@ class _LoginFormPartState extends State<LoginFormPart>{
                   controller: passwordController,
                   obscureText: !_isPasswordVisible,
                   keyboardType: TextInputType.visiblePassword,
+                  inputFormatters: [ 
+                    LengthLimitingTextInputFormatter(50)
+                  ],
                   onEditingComplete: _tryLogin,
                   decoration: InputDecoration(
                     hintText: "Password",
