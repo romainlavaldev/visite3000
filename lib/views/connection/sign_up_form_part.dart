@@ -1,32 +1,95 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:visite3000/views/common/no_internet.dart';
+
+import 'package:visite3000/globals.dart' as globals;
 
 class SignUpFormPart extends StatefulWidget{
-  const SignUpFormPart({super.key});
+  final Function setIsRegistered;
+  final Function setIsLoading;
+  const SignUpFormPart({super.key, required this.setIsRegistered, required this.setIsLoading});
 
   @override
   State<SignUpFormPart> createState() => _SignUpFormPartState();
 }
 
 class _SignUpFormPartState extends State<SignUpFormPart>{
-  final _storage = const FlutterSecureStorage();
-
   final _loginfromkey = GlobalKey<FormState>();
 
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
   
   bool _isPasswordVisible = false;
+  bool _isPasswordConfirmVisible = false;
 
   Future<void> _trySignup() async {
 
-    Map data = {'username': usernameController.text, 'email': emailController.text, 'password': passwordController.text, 'passwordConfirm': passwordConfirmController.text};
-
-    if (passwordController.text != passwordConfirmController.text)
+    if (passwordController.text != passwordConfirmController.text || !isValidEmail(emailController.text))
     {
       return;
+    }
+
+    widget.setIsLoading(true);
+
+    Map data = {'firstName': firstNameController.text, 
+                'lastName': lastNameController.text, 
+                'username': usernameController.text, 
+                'email': emailController.text, 
+                'password': passwordController.text
+                };
+
+    String body = jsonEncode(data);
+
+    await Future.delayed(const Duration(seconds: 2), (){});
+
+    Response response;
+    try
+    {
+      response = await http.post(
+        Uri.parse('${globals.serverEntryPoint}/db/signup.php'),
+        body: body,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      );
+    } catch(e){
+      print(e);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const NoInternet()));
+      return;
+    }
+
+    if(response.statusCode == 200)
+    {
+      dynamic jsonData = json.decode(response.body);
+      widget.setIsLoading(false);
+      if (jsonData['status'] == 1)
+      {
+        widget.setIsRegistered(true);
+      }
+      else
+      {
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              elevation: 0,
+              content: Text(
+                jsonData['message'],
+                textAlign: TextAlign.center,
+              ),
+              icon: const Icon(Icons.person_off_outlined),
+            )
+          );
+      }
     }
   }
 
@@ -61,17 +124,59 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
           key: _loginfromkey,
           child: Column(
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: firstNameController,
+                      textCapitalization: TextCapitalization.words,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(50)
+                      ],
+                      decoration: const InputDecoration(
+                        hintText: "First Name",
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: lastNameController,
+                      textCapitalization: TextCapitalization.words,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(50)
+                      ],
+                      decoration: const InputDecoration(
+                        hintText: "Last Name",
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: usernameController,
+                textCapitalization: TextCapitalization.words,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(50)
+                ],
                 decoration: const InputDecoration(
                   hintText: "Username"
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               TextFormField(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(80)
+                ],
                 decoration: const InputDecoration(
                   hintText: "Email"
                 ),
@@ -84,12 +189,15 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                 },
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               TextFormField(
                 controller: passwordController,
                 obscureText: !_isPasswordVisible,
                 keyboardType: TextInputType.visiblePassword,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(50)
+                ],
                 decoration: InputDecoration(
                   hintText: "Password",
                   suffixIcon: IconButton(
@@ -106,23 +214,26 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               TextFormField(
                 controller: passwordConfirmController,
-                obscureText: !_isPasswordVisible,
+                obscureText: !_isPasswordConfirmVisible,
                 keyboardType: TextInputType.visiblePassword,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(50)
+                ],
                 onEditingComplete: _trySignup,
                 decoration: InputDecoration(
                   hintText: "Confirm Password",
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined
+                      _isPasswordConfirmVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined
                     ),
                     color: Colors.pink,
                     onPressed: () {
                       setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
+                        _isPasswordConfirmVisible = !_isPasswordConfirmVisible;
                       });
                     },
                   )
@@ -139,7 +250,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
           ),
         ),
         const SizedBox(
-          height: 60,
+          height: 45,
         ),
         TextButton(
           onPressed: (){
