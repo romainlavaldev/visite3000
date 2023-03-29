@@ -8,7 +8,9 @@ import 'package:visite3000/views/common/no_internet.dart';
 import 'package:visite3000/globals.dart' as globals;
 
 class SignUpFormPart extends StatefulWidget{
-  const SignUpFormPart({super.key});
+  final Function setIsRegistered;
+  final Function setIsLoading;
+  const SignUpFormPart({super.key, required this.setIsRegistered, required this.setIsLoading});
 
   @override
   State<SignUpFormPart> createState() => _SignUpFormPartState();
@@ -25,6 +27,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
   final passwordConfirmController = TextEditingController();
   
   bool _isPasswordVisible = false;
+  bool _isPasswordConfirmVisible = false;
 
   Future<void> _trySignup() async {
 
@@ -32,6 +35,8 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
     {
       return;
     }
+
+    widget.setIsLoading(true);
 
     Map data = {'firstName': firstNameController.text, 
                 'lastName': lastNameController.text, 
@@ -63,9 +68,11 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
 
     if(response.statusCode == 200)
     {
-    dynamic jsonData = json.decode(response.body);
+      dynamic jsonData = json.decode(response.body);
+      widget.setIsLoading(false);
       if (jsonData['status'] == 1)
       {
+        widget.setIsRegistered(true);
       }
       else
       {
@@ -121,6 +128,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                   Expanded(
                     child: TextFormField(
                       controller: firstNameController,
+                      textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
                         hintText: "First Name",
                       ),
@@ -132,6 +140,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
                   Expanded(
                     child: TextFormField(
                       controller: lastNameController,
+                      textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
                         hintText: "Last Name",
                       ),
@@ -144,6 +153,7 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
               ),
               TextFormField(
                 controller: usernameController,
+                textCapitalization: TextCapitalization.words,
                 decoration: const InputDecoration(
                   hintText: "Username"
                 ),
@@ -191,19 +201,19 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
               ),
               TextFormField(
                 controller: passwordConfirmController,
-                obscureText: !_isPasswordVisible,
+                obscureText: !_isPasswordConfirmVisible,
                 keyboardType: TextInputType.visiblePassword,
                 onEditingComplete: _trySignup,
                 decoration: InputDecoration(
                   hintText: "Confirm Password",
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined
+                      _isPasswordConfirmVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined
                     ),
                     color: Colors.pink,
                     onPressed: () {
                       setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
+                        _isPasswordConfirmVisible = !_isPasswordConfirmVisible;
                       });
                     },
                   )

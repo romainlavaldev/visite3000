@@ -8,7 +8,6 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:visite3000/views/connection/scoreboard.dart';
-import 'package:visite3000/views/connection/sign_up.dart';
 import 'package:visite3000/views/connection/sign_up_form_part.dart';
 import 'package:visite3000/views/connection/wave_background.dart';
 
@@ -32,8 +31,10 @@ class _LoginScreenState extends State<LoginScreen>{
   late int gameTime;
   TextEditingController gameNameController = TextEditingController();
 
-  _signUp(){
-    Navigator.push(context, MaterialPageRoute(builder: (builder) => const SignUp()));
+  setIsRegistered(bool isRegistered){
+    setState(() {
+      isLoginForm = isRegistered;
+    });
   }
 
   setIsLoading(bool isLoading){
@@ -144,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen>{
                         borderRadius: BorderRadius.all(Radius.circular(30))
                       ),
                       child: (() {
-                        Widget formContent = isLoginForm ? LoginFormPart(setIsLoading: setIsLoading) : const SignUpFormPart();
+                        Widget formContent = isLoginForm ? LoginFormPart(setIsLoading: setIsLoading) : SignUpFormPart(setIsRegistered: setIsRegistered, setIsLoading: setIsLoading);
                     
                         return AnimatedSwitcher(
                           duration: const Duration(milliseconds: 500),
