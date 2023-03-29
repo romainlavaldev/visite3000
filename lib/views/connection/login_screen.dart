@@ -8,13 +8,13 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:visite3000/views/connection/scoreboard.dart';
+import 'package:visite3000/views/connection/sign_up.dart';
 import 'package:visite3000/views/connection/sign_up_form_part.dart';
 import 'package:visite3000/views/connection/wave_background.dart';
 
 import 'package:visite3000/globals.dart' as globals;
 import '../common/no_internet.dart';
 import 'login_form_part.dart';
-
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -31,6 +31,10 @@ class _LoginScreenState extends State<LoginScreen>{
   bool isGameScoreSaved = false;
   late int gameTime;
   TextEditingController gameNameController = TextEditingController();
+
+  _signUp(){
+    Navigator.push(context, MaterialPageRoute(builder: (builder) => const SignUp()));
+  }
 
   setIsLoading(bool isLoading){
     setState(() {
@@ -85,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen>{
     Map data = {'name': gameNameController.text, 'time': gameTime, 'displayTime': StopWatchTimer.getDisplayTime(gameTime)};
 
     String body = jsonEncode(data);
-    print(body);
     await Future.delayed(const Duration(seconds: 2), (){});
 
       Response response;
@@ -113,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen>{
       body: Stack(
         alignment: Alignment.center,
         children: [
-          WaveBackground(numberOfSteps: 2, winGame: winGame,),
+          WaveBackground(numberOfSteps: 15, winGame: winGame,),
           Padding(
             padding: const EdgeInsets.only(
               top: 100,
@@ -212,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen>{
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Column(
-                    children: [
+                    children: const [
                       Text(
                         "You won the game !",
                         style: TextStyle(
@@ -262,9 +265,19 @@ class _LoginScreenState extends State<LoginScreen>{
                 foregroundColor: Colors.white
               ),
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (builder) {return ScoreBoard();}));
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryanim) => const ScoreBoard(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return Align(
+                        child: FadeTransition(opacity: animation, child: child),
+                      );
+                    },
+                  )
+                );
               },
-              child: Text("Scoreboard"),
+              child: const Text("Scoreboard"),
             ),
           )
         ],

@@ -53,7 +53,6 @@ class _WaveBackgroundState extends State<WaveBackground> with TickerProviderStat
     double t = (value - lower) / (upper - lower);
     double res = lower + Curves.easeInOut.transform(t) * (upper - lower);
     return reverse ? 1 - res : res;
-    return ((upper + lower) / 2 - value) + (upper + lower) / 2;
   }
 
   shakePhone() {

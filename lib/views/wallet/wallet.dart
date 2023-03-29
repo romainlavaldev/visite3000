@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:visite3000/views/wallet/single_card.dart';
@@ -18,6 +19,7 @@ class Wallet extends StatefulWidget
 class _WalletState extends State<Wallet>
 {
   final _storage = const FlutterSecureStorage();
+  int? selectedId;
   List<Widget> _cardList = List<Widget>.empty();
 
   Future<void> _getUserCards() async {
@@ -25,7 +27,7 @@ class _WalletState extends State<Wallet>
     String body = jsonEncode(data);
     
     Response response = await http.post(
-      Uri.parse('${globals.serverEntryPoint}/db/get_user_cards.php'),
+      Uri.parse('${globals.serverEntryPoint}/db/get_user_subbed_cards.php'),
       body: body,
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +45,6 @@ class _WalletState extends State<Wallet>
       }
 
       _cardList = cards;
-
     }
   }
 
@@ -57,7 +58,7 @@ class _WalletState extends State<Wallet>
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return _cardList.isNotEmpty ? ListView(
       children: _cardList.map((cardWidget) => 
         Padding(
           padding: const EdgeInsets.only(
@@ -68,6 +69,11 @@ class _WalletState extends State<Wallet>
           child: cardWidget,
         )
       ).toList()
-    );
+    ) : const Center(
+            child: SpinKitCubeGrid(
+              color: Colors.white,
+              size: 60,
+            ),
+          );
   }
 }
