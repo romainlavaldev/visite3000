@@ -21,9 +21,9 @@ class _ScannerState extends State<Scanner> {
     final _storage = const FlutterSecureStorage();
     bool alreadyScanned = false;
 
-  Future<bool> addSubbedCard(String readValue) async {
+  Future<String> addSubbedCard(String readValue) async {
     if (readValue.isEmpty){
-      return false;
+      return "not_added";
     }
 
 
@@ -43,10 +43,10 @@ class _ScannerState extends State<Scanner> {
     );
 
     if (response.statusCode == 200){
-      return true;
-    }
-    else {
-      return false;
+      dynamic jsonData = json.decode(response.body);
+      return jsonData['status'];
+    } else {
+      return "not_added";
     }
   }
 
@@ -101,11 +101,11 @@ class _ScannerState extends State<Scanner> {
 
             final Barcode barcode = capture.barcodes[0];
             String val = barcode.rawValue ?? "";
-            addSubbedCard(val).then((validation) {
+            addSubbedCard(val).then((status) {
               setState(() {
                 alreadyScanned = true;
               });
-              if (!validation){
+              if (status == "not_added"){
                 showDialog(
                   context: context,
                   builder: (context) => const AlertDialog(
@@ -114,11 +114,11 @@ class _ScannerState extends State<Scanner> {
                       "Can't find card",
                       textAlign: TextAlign.center,
                     ),
-                    icon: Icon(Icons.not_interested_rounded),
+                    icon: Icon(Icons.close),
                   )
                 ).then((value) => Navigator.pop(context));
               }
-              else
+              else if (status == "added")
               {
                 showDialog(
                   context: context,
@@ -128,7 +128,21 @@ class _ScannerState extends State<Scanner> {
                       "Card added to your wallet",
                       textAlign: TextAlign.center,
                     ),
-                    icon: Icon(Icons.gpp_good_rounded),
+                    icon: Icon(Icons.check),
+                  )
+                ).then((value) => Navigator.pop(context));
+              }
+              else if (status == "exists")
+              {
+                showDialog(
+                  context: context,
+                  builder: (context) => const AlertDialog(
+                    elevation: 0,
+                    content: Text(
+                      "You already have this card in your wallet !",
+                      textAlign: TextAlign.center,
+                    ),
+                    icon: Icon(Icons.copy_all_rounded),
                   )
                 ).then((value) => Navigator.pop(context));
               }
