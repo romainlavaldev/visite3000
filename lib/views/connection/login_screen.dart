@@ -89,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen>{
     Map data = {'name': gameNameController.text, 'time': gameTime, 'displayTime': StopWatchTimer.getDisplayTime(gameTime)};
 
     String body = jsonEncode(data);
-    print(body);
     await Future.delayed(const Duration(seconds: 2), (){});
 
       Response response;
@@ -117,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen>{
       body: Stack(
         alignment: Alignment.center,
         children: [
-          WaveBackground(numberOfSteps: 2, winGame: winGame,),
+          WaveBackground(numberOfSteps: 15, winGame: winGame,),
           Padding(
             padding: const EdgeInsets.only(
               top: 100,
@@ -215,8 +214,8 @@ class _LoginScreenState extends State<LoginScreen>{
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Column(
-                    children: [
+                  Column(
+                    children: const [
                       Text(
                         "You won the game !",
                         style: TextStyle(
@@ -266,9 +265,19 @@ class _LoginScreenState extends State<LoginScreen>{
                 foregroundColor: Colors.white
               ),
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (builder) {return ScoreBoard();}));
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryanim) => const ScoreBoard(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return Align(
+                        child: FadeTransition(opacity: animation, child: child),
+                      );
+                    },
+                  )
+                );
               },
-              child: Text("Scoreboard"),
+              child: const Text("Scoreboard"),
             ),
           )
         ],

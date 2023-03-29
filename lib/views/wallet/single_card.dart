@@ -2,8 +2,10 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:visite3000/globals.dart' as globals;
+import 'package:visite3000/views/card_details.dart';
 
 
 
@@ -34,6 +36,30 @@ class _SingleCardState extends State<SingleCard> {
     cardImage = Image(image: NetworkImage("${globals.serverEntryPoint}/cards/${widget._cardId}.png"));
   }
 
+  double computeControlButtonsOpacity(double animValue){
+    return animValue < pi / 2 ? 0 : 1;
+  }
+
+  void callPhone(String phoneNumber) async {
+    Uri phoneUri = Uri.parse('tel:$phoneNumber');
+    if (await canLaunchUrl(phoneUri)){
+      await launchUrl(phoneUri);
+      print("ok");
+    } else {
+      print("pas ok");
+    }
+  }
+
+  void sendMail(String mail) async{
+    Uri mailUri = Uri.parse('mailto:$mail');
+    if (await canLaunchUrl(mailUri)){
+      await launchUrl(mailUri);
+      print("ok");
+    } else {
+      print("pas ok");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -61,54 +87,67 @@ class _SingleCardState extends State<SingleCard> {
                       child: cardImage
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.pink,
-                          shape: BoxShape.circle
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(15),
-                          iconSize: 40,
-                          icon: const Icon(
-                            Icons.phone,
-                            color: Colors.white
+                  Opacity(
+                    opacity: computeControlButtonsOpacity(val),
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(pi),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.pink,
+                              shape: BoxShape.circle
+                            ),
+                            child: IconButton(
+                              padding: const EdgeInsets.all(15),
+                              iconSize: 40,
+                              icon: const Icon(
+                                Icons.phone,
+                                color: Colors.white
+                              ),
+                              onPressed: () {callPhone("");},
+                            ),
                           ),
-                          onPressed: () => true,
-                        ),
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.pink,
+                              shape: BoxShape.circle
+                            ),
+                            child: IconButton(
+                              padding: const EdgeInsets.all(15),
+                              iconSize: 40,
+                              icon: const Icon(
+                                Icons.mail,
+                                color: Colors.white
+                              ),
+                              onPressed: () {sendMail("");},
+                            ),
+                          ),Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.pink,
+                              shape: BoxShape.circle
+                            ),
+                            child: IconButton(
+                              padding: const EdgeInsets.all(15),
+                              iconSize: 40,
+                              icon: const Icon(
+                                Icons.add,
+                                color: Colors.white
+                              ),
+                              onPressed: () {Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (builder) => CardDetails(cardId: widget._cardId)
+                                )
+                              );
+                              }
+                            ),
+                          ),
+                        ],
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.pink,
-                          shape: BoxShape.circle
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(15),
-                          iconSize: 40,
-                          icon: const Icon(
-                            Icons.mail,
-                            color: Colors.white
-                          ),
-                          onPressed: () => true,
-                        ),
-                      ),Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.pink,
-                          shape: BoxShape.circle
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(15),
-                          iconSize: 40,
-                          icon: const Icon(
-                            Icons.add,
-                            color: Colors.white
-                          ),
-                          onPressed: () => true,
-                        ),
-                      ),
-                    ],
+                    ),
                   )
                 ],
               )

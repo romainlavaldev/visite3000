@@ -12,7 +12,7 @@
 
     $mysqlCon = mysqli_connect($dbhost, $dbuser, $dbpassword, $db);
 
-    $query = "SELECT cardId FROM userCards WHERE userId='$postdata->userId'";
+    $query = "SELECT id FROM cards WHERE ownerId='$postdata->userId'";
 
     $result = $mysqlCon->query($query);
 
