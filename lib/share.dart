@@ -76,6 +76,7 @@ class _ShareState extends State<Share>
                   height: 195,
                   child: ScrollSnapList(
                     scrollDirection: Axis.horizontal,
+                    initialIndex: 0,
                     itemSize: 320,
                     itemCount: snapshot.data!.length,
                     onItemFocus: (index) {
@@ -90,7 +91,7 @@ class _ShareState extends State<Share>
               ),
               Column(
                 children: [
-                  const Text(
+                  if(qrData.isNotEmpty) const Text(
                     "Scan to add to your wallet",
                     style: TextStyle(
                       fontSize: 28,
@@ -111,7 +112,38 @@ class _ShareState extends State<Share>
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: QrImage(data: qrData),
+                        child: qrData.isNotEmpty ? QrImage(
+                          data: qrData, 
+                          eyeStyle: const QrEyeStyle(
+                            eyeShape: QrEyeShape.circle, 
+                            color: Colors.pink
+                          ),
+                          dataModuleStyle: const QrDataModuleStyle(
+                            color: Colors.pink,
+                            dataModuleShape: QrDataModuleShape.circle
+                          ),
+                        ) : SizedBox(
+                          width: 280,
+                          height: 280,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.arrow_upward,
+                                size: 50,
+                              ),
+                              SizedBox(
+                                height: 40,
+                              ),
+                              Text(
+                                "Please select a card",
+                                style: TextStyle(
+                                  fontSize: 25
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       )
                     ),
                   ),
