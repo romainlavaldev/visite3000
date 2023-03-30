@@ -61,6 +61,13 @@ class _LayoutState extends State<Layout>
         elevation: 0,
         centerTitle: true,
         title: Text(_pagesDestinationNameList[_selectedIndex]),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(0),
+          child: Container(
+            color: Color.fromARGB(120, 255, 255, 255),
+            height: 2,
+          ),
+        ),
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Image.asset("assets/icons/Logo-Visite3000-Splash.png"),
@@ -96,7 +103,16 @@ class _LayoutState extends State<Layout>
         ],
       ),
       body: _pagesDestinationList[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Color.fromARGB(120, 255, 255, 255),
+              width: 2
+            )
+          )
+        ),
+        child: BottomNavigationBar(
         backgroundColor: Colors.pink,
         selectedItemColor: Colors.yellow,
         unselectedItemColor: Colors.white,
@@ -119,7 +135,8 @@ class _LayoutState extends State<Layout>
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-      ),
+        ),
+      )
     );
   }
 }

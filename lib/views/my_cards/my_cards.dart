@@ -91,9 +91,15 @@ class MyCardTile extends StatelessWidget{
               alignment: Alignment.centerRight,
               child: Container(
                 margin: const EdgeInsets.all(5),
-                decoration: const BoxDecoration(
-                  color: Colors.yellow,
-                  borderRadius: BorderRadius.all(Radius.circular(20))
+                decoration: BoxDecoration(
+                  color: Colors.pink,
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  boxShadow: [ BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 5,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 0)
+                  )]
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -101,20 +107,22 @@ class MyCardTile extends StatelessWidget{
                     IconButton(
                       onPressed: (){},
                       icon: const Icon(
-                        Icons.send
+                        Icons.send,
+                        color: Colors.white,
                       )
                     ),
                     SizedBox(
                       width: 1,
                       height: 20,
                       child: Container(
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                     IconButton(
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (builder) => CardEdit(cardId: cardId))),
                       icon: const Icon(
-                        Icons.edit
+                        Icons.edit,
+                        color: Colors.white,
                       )
                     )
                   ],

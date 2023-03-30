@@ -81,11 +81,23 @@ class _WalletState extends State<Wallet>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const Image(image: 
+                  AssetImage("assets/modcheck.gif"),
+                  width: 150,
+                  height: 150,
+                ),
+                const Padding(padding: 
+                  EdgeInsets.only(bottom: 20),
+                ),
                 const Text(
                   "It's empty...",
                   style: TextStyle(
-                    fontSize: 30
+                    fontSize: 30,
+                    color: Colors.white
                   ),
+                ),
+                const Padding(padding: 
+                  EdgeInsets.only(bottom: 20),
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
@@ -94,7 +106,7 @@ class _WalletState extends State<Wallet>
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (builder) => const Scanner()));
                   },
-                  child: const Text("Let's scan")
+                  child: const Text("Let's scan some cards !")
                 )
               ],
             )
