@@ -167,8 +167,7 @@ class _LayoutState extends State<Layout>
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        ),
-      )
+      ),
     );
   }
 }
