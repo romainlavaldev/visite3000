@@ -12,7 +12,7 @@ class WaveBackground extends StatefulWidget{
   final double defaultHeigth;
   final int numberOfSteps;
   final Function winGame;
-  WaveBackground({super.key, this.defaultHeigth = 0.2, this.numberOfSteps = 10, required this.winGame});
+  const WaveBackground({super.key, this.defaultHeigth = 0.2, this.numberOfSteps = 10, required this.winGame});
 
   @override
   State<WaveBackground> createState() => _WaveBackgroundState();
@@ -166,10 +166,10 @@ class _WaveBackgroundState extends State<WaveBackground> with TickerProviderStat
   }
 
   @override
-  void dispose() async {
-    super.dispose();
+  void dispose() {
+    waveStopWatch.dispose();
     waveWobblingController.dispose();
-    await waveStopWatch.dispose();
+    super.dispose();
   }
   
   @override

@@ -27,9 +27,9 @@ class _ScannerState extends State<Scanner> {
     }
 
 
-    int cardId = int.tryParse(readValue) ?? -1;
+    String shareCode = readValue;
     
-    Map data = {'userId': await _storage.read(key: "UserId"), 'cardId': cardId};
+    Map data = {'userId': await _storage.read(key: "UserId"), 'shareCode': shareCode};
 
     String body = jsonEncode(data);
     
@@ -61,7 +61,7 @@ class _ScannerState extends State<Scanner> {
               icon: ValueListenableBuilder(
                 valueListenable: cameraController.torchState,
                 builder: (context, state, child) {
-                  switch (state as TorchState) {
+                  switch (state) {
                     case TorchState.off:
                       return const Icon(Icons.flash_off, color: Colors.grey);
                     case TorchState.on:
@@ -77,7 +77,7 @@ class _ScannerState extends State<Scanner> {
               icon: ValueListenableBuilder(
                 valueListenable: cameraController.cameraFacingState,
                 builder: (context, state, child) {
-                  switch (state as CameraFacing) {
+                  switch (state) {
                     case CameraFacing.front:
                       return const Icon(Icons.camera_front);
                     case CameraFacing.back:
@@ -143,6 +143,20 @@ class _ScannerState extends State<Scanner> {
                       textAlign: TextAlign.center,
                     ),
                     icon: Icon(Icons.copy_all_rounded),
+                  )
+                ).then((value) => Navigator.pop(context));
+              } 
+              else if (status == "owner")
+              {
+                showDialog(
+                  context: context,
+                  builder: (context) => const AlertDialog(
+                    elevation: 0,
+                    content: Text(
+                      "This card is yours !",
+                      textAlign: TextAlign.center,
+                    ),
+                    icon: Icon(Icons.face),
                   )
                 ).then((value) => Navigator.pop(context));
               }

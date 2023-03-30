@@ -40,9 +40,8 @@ class _NoInternetState extends State<NoInternet> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     waveHeigthController.dispose();
+    super.dispose();
   }
 
   @override

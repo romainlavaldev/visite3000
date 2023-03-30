@@ -62,7 +62,6 @@ class _SignUpFormPartState extends State<SignUpFormPart>{
         }
       );
     } catch(e){
-      print(e);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const NoInternet()));
       return;
     }

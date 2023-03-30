@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:visite3000/views/connection/scoreboard.dart';
@@ -56,10 +55,10 @@ class _LoginScreenState extends State<LoginScreen>{
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Save score'),
+        title: const Text('Save score'),
         content: TextField(
           controller: gameNameController,
-          decoration: InputDecoration(hintText: "Your name"),
+          decoration: const InputDecoration(hintText: "Your name"),
         ),
         actions: <Widget>[
           TextButton(
@@ -71,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen>{
                 borderRadius: BorderRadius.all(Radius.circular(30))
               )
             ),
-            child: Text('Save'),
+            child: const Text('Save'),
             onPressed: () {
               setState(() {
                 sendScoreToDatabase();
@@ -92,9 +91,8 @@ class _LoginScreenState extends State<LoginScreen>{
     String body = jsonEncode(data);
     await Future.delayed(const Duration(seconds: 2), (){});
 
-      Response response;
       try{
-        response = await http.post(
+        await http.post(
           Uri.parse('${globals.serverEntryPoint}/db/save_game_score.php'),
           body: body,
           headers: {

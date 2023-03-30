@@ -11,7 +11,9 @@ import 'package:visite3000/views/card_details.dart';
 
 class SingleCard extends StatefulWidget{
   final int _cardId;
-  const SingleCard(this._cardId, {super.key});
+  final String phone;
+  final String mail;
+  const SingleCard(this._cardId, this.phone, this.mail, {super.key});
 
   @override
   State<SingleCard> createState() => _SingleCardState();
@@ -44,9 +46,6 @@ class _SingleCardState extends State<SingleCard> {
     Uri phoneUri = Uri.parse('tel:$phoneNumber');
     if (await canLaunchUrl(phoneUri)){
       await launchUrl(phoneUri);
-      print("ok");
-    } else {
-      print("pas ok");
     }
   }
 
@@ -54,9 +53,6 @@ class _SingleCardState extends State<SingleCard> {
     Uri mailUri = Uri.parse('mailto:$mail');
     if (await canLaunchUrl(mailUri)){
       await launchUrl(mailUri);
-      print("ok");
-    } else {
-      print("pas ok");
     }
   }
 
@@ -69,93 +65,93 @@ class _SingleCardState extends State<SingleCard> {
         duration: const Duration(milliseconds: 600),
         builder: (BuildContext context, double val, __){
           return Transform(
-            transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(val),
+            transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(Curves.easeInOut.transform(val / angle) * angle),
             alignment: Alignment.center,
-            child: isSelected ?
-              Stack(
-                alignment: Alignment.center,
-                fit: StackFit.passthrough,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: ImageFiltered(
-                      imageFilter: ImageFilter.blur(
-                        sigmaX: 2,
-                        sigmaY: 2,
-                        tileMode: TileMode.mirror
-                      ),
-                      child: cardImage
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.passthrough,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: ImageFiltered(
+                    imageFilter: ImageFilter.blur(
+                      sigmaX: val,
+                      sigmaY: val,
+                      tileMode: TileMode.mirror
+                    ),
+                    child: cardImage
+                  ),
+                ),
+                Opacity(
+                  opacity: computeControlButtonsOpacity(val),
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(pi),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.pink,
+                            shape: BoxShape.circle
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(15),
+                            iconSize: 40,
+                            icon: const Icon(
+                              Icons.phone,
+                              color: Colors.white
+                            ),
+                            onPressed: () {isSelected ? callPhone(widget.phone) : flipCard();},
+                          ),
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.pink,
+                            shape: BoxShape.circle
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(15),
+                            iconSize: 40,
+                            icon: const Icon(
+                              Icons.mail,
+                              color: Colors.white
+                            ),
+                            onPressed: () { isSelected ? sendMail(widget.mail) : flipCard();},
+                          ),
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.pink,
+                            shape: BoxShape.circle
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(15),
+                            iconSize: 40,
+                            icon: const Icon(
+                              Icons.add,
+                              color: Colors.white
+                            ),
+                            onPressed: () {
+                              if (isSelected) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (builder) => CardDetails(cardId: widget._cardId)
+                                  )
+                                );
+                              } else {
+                                flipCard();
+                              }
+                            }
+                          )
+                        )
+                      ],
                     ),
                   ),
-                  Opacity(
-                    opacity: computeControlButtonsOpacity(val),
-                    child: Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(pi),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.pink,
-                              shape: BoxShape.circle
-                            ),
-                            child: IconButton(
-                              padding: const EdgeInsets.all(15),
-                              iconSize: 40,
-                              icon: const Icon(
-                                Icons.phone,
-                                color: Colors.white
-                              ),
-                              onPressed: () {callPhone("");},
-                            ),
-                          ),
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.pink,
-                              shape: BoxShape.circle
-                            ),
-                            child: IconButton(
-                              padding: const EdgeInsets.all(15),
-                              iconSize: 40,
-                              icon: const Icon(
-                                Icons.mail,
-                                color: Colors.white
-                              ),
-                              onPressed: () {sendMail("");},
-                            ),
-                          ),Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.pink,
-                              shape: BoxShape.circle
-                            ),
-                            child: IconButton(
-                              padding: const EdgeInsets.all(15),
-                              iconSize: 40,
-                              icon: const Icon(
-                                Icons.add,
-                                color: Colors.white
-                              ),
-                              onPressed: () {Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (builder) => CardDetails(cardId: widget._cardId)
-                                )
-                              );
-                              }
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              )
-                :
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: cardImage
-            ),
+                )
+              ],
+            )
           );
         }
       )

@@ -8,12 +8,17 @@ import 'package:visite3000/globals.dart' as globals;
 
 import '../../models/card.dart';
 
-class CardEdit extends StatelessWidget {
+class CardEdit extends StatefulWidget {
   final int cardId;
-  CardEdit({super.key, required this.cardId});
+  const CardEdit({super.key, required this.cardId});
 
+  @override
+  State<CardEdit> createState() => _CardEditState();
+}
+
+class _CardEditState extends State<CardEdit> {
   Future<CardModel> getCardDatas() async {
-    Map data = {'cardId': cardId};
+    Map data = {'cardId': widget.cardId};
     String body = jsonEncode(data);
     
     Response response = await http.post(
@@ -29,10 +34,11 @@ class CardEdit extends StatelessWidget {
       dynamic jsonData = json.decode(response.body);
 
       return CardModel(
-        cardId,
+        widget.cardId,
         jsonData["datas"][0]["phone"] ?? "",
         jsonData["datas"][0]["mail"] ?? "",
         jsonData["datas"][0]["role"] ?? "",
+        jsonData["datas"][0]["shareCode"] ?? "",
         jsonData["datas"][0]["firstname"] ?? "",
         jsonData["datas"][0]["lastname"] ?? "",
       );
@@ -44,13 +50,14 @@ class CardEdit extends StatelessWidget {
       "Card not found",
       "Card not found",
       "Card not found",
+      "Card not found",
       "Card not found"
     );
   }
 
   Future<bool> saveDatas() async {
     Map data = {
-      'cardId': cardId,
+      'cardId': widget.cardId,
       'role': roleController.text, 
       'phone': phoneController.text,
       'mail': mailController.text
@@ -106,7 +113,9 @@ class CardEdit extends StatelessWidget {
   }
 
   TextEditingController roleController = TextEditingController();
+
   TextEditingController phoneController = TextEditingController();
+
   TextEditingController mailController = TextEditingController();
 
   @override
@@ -128,7 +137,7 @@ class CardEdit extends StatelessWidget {
                   child: Column(
                     children: [
                       Image(
-                        image: NetworkImage("${globals.serverEntryPoint}/cards/$cardId.png"),
+                        image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,7 +245,6 @@ class CardEdit extends StatelessWidget {
       )
     );
   }
-
 }
 
 
@@ -280,7 +288,7 @@ class CardFormEntryEdit extends StatelessWidget{
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextField(
-                scrollPadding: EdgeInsets.only(bottom: 120),
+                scrollPadding: const EdgeInsets.only(bottom: 120),
                 decoration: null,
                 style: const TextStyle(
                   fontSize: 22,

@@ -24,7 +24,7 @@ class _ShareState extends State<Share>
   final _storage = const FlutterSecureStorage();
   String qrData = "";
 
-  Future<List<Tuple2<int, ShareCardTile>>> getUserCards() async {
+  Future<List<Tuple2<String, ShareCardTile>>> getUserCards() async {
     Map data = {'userId': await _storage.read(key: "UserId")};
     String body = jsonEncode(data);
     
@@ -40,11 +40,12 @@ class _ShareState extends State<Share>
     if (response.statusCode == 200){
       dynamic jsonData = json.decode(response.body);
 
-      List<Tuple2<int, ShareCardTile>> cards = <Tuple2<int, ShareCardTile>>[];
+      List<Tuple2<String, ShareCardTile>> cards = <Tuple2<String, ShareCardTile>>[];
 
       for (dynamic card in jsonData['datas']) {
         int cardId = int.parse(card['id']);
-        cards.add(Tuple2(cardId, ShareCardTile(cardId: cardId)));
+        String shareCode = card['shareCode'];
+        cards.add(Tuple2(shareCode, ShareCardTile(cardId: cardId)));
       }
 
       return cards;

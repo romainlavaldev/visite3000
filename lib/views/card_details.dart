@@ -41,6 +41,7 @@ class _CardDetailsState extends State<CardDetails> {
         jsonData["datas"][0]["phone"] ?? "",
         jsonData["datas"][0]["mail"] ?? "",
         jsonData["datas"][0]["role"] ?? "",
+        jsonData["datas"][0]["shareCode"] ?? "",
         jsonData["datas"][0]["firstname"] ?? "",
         jsonData["datas"][0]["lastname"] ?? "",
       );
@@ -48,6 +49,7 @@ class _CardDetailsState extends State<CardDetails> {
 
     return CardModel(
       0,
+      "Card not found",
       "Card not found",
       "Card not found",
       "Card not found",
@@ -146,9 +148,6 @@ class CardFormEntryReadOnly extends StatelessWidget{
     Uri phoneUri = Uri.parse('tel:$phoneNumber');
     if (await canLaunchUrl(phoneUri)){
       await launchUrl(phoneUri);
-      print("ok");
-    } else {
-      print("pas ok");
     }
   }
 
@@ -156,9 +155,6 @@ class CardFormEntryReadOnly extends StatelessWidget{
     Uri phoneUri = Uri.parse('sms:$phoneNumber');
     if (await canLaunchUrl(phoneUri)){
       await launchUrl(phoneUri);
-      print("ok");
-    } else {
-      print("pas ok");
     }
   }
 
@@ -166,9 +162,6 @@ class CardFormEntryReadOnly extends StatelessWidget{
     Uri mailUri = Uri.parse('mailto:$mail');
     if (await canLaunchUrl(mailUri)){
       await launchUrl(mailUri);
-      print("ok");
-    } else {
-      print("pas ok");
     }
   }
 

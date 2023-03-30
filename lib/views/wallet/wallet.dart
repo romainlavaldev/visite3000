@@ -4,7 +4,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-import 'package:visite3000/share.dart';
 import 'package:visite3000/views/common/scanner.dart';
 import 'package:visite3000/views/wallet/single_card.dart';
 
@@ -42,7 +41,7 @@ class _WalletState extends State<Wallet>
       List<Widget> cards = <Widget>[];
 
       for (dynamic card in jsonData['datas'] ?? []) {
-        cards.add(SingleCard(int.parse(card['cardId'])));
+        cards.add(SingleCard(int.parse(card['cardId']), card['phone'], card['mail']));
       }
 
       return cards;

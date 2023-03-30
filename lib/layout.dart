@@ -29,7 +29,7 @@ class _LayoutState extends State<Layout>
   }
 
   void _addCard(context){
-    Navigator.push(context, MaterialPageRoute(builder: (builder) => Scanner()));
+    Navigator.push(context, MaterialPageRoute(builder: (builder) => const Scanner()));
   }
 
   final List<Widget> _pagesDestinationList = const [
