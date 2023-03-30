@@ -51,6 +51,7 @@ dependencies:
   tuple: ^2.0.1
   mobile_scanner: ^3.1.1
   sensors: ^2.0.3
+  settings_ui: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -110,6 +111,9 @@ flutter:
     - family: Reality Hyper
       fonts:
         - asset: assets/fonts/Reality_Hyper_Regular.ttf
+    - family: Pangram
+      fonts:
+        - asset: assets/fonts/Pangram/Pangram-Regular.otf
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
