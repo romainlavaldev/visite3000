@@ -130,7 +130,7 @@ class _ScannerState extends State<Scanner> {
                     ),
                     icon: Icon(Icons.check),
                   )
-                ).then((value) => Navigator.pop(context));
+                ).then((value) => Navigator.pop(context, 1));
               }
               else if (status == "exists")
               {

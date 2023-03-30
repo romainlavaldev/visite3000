@@ -120,129 +120,135 @@ class _CardEditState extends State<CardEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true, 
-      backgroundColor: Colors.pink,
-      body: FutureBuilder(
-        future: getCardDatas(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            roleController.text = snapshot.data!.role;
-            phoneController.text = snapshot.data!.phone;
-            mailController.text = snapshot.data!.mail;
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Image(
-                        image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            color: Colors.pink,
-                            width: double.infinity,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 15,
-                                right: 15,
-                                top: 5
-                              ),
-                              child: Column(
-                                children:
-                                [
-                                  CardFormEntryEdit(title: "Role", controller: roleController),
-                                  CardFormEntryEdit(title: "Phone", controller: phoneController, isPhone: true,),
-                                  CardFormEntryEdit(title: "Mail", controller: mailController, isMail: true,),
-                                ]
+    return WillPopScope(
+      onWillPop: () {
+        confirmCancel(context);
+        return Future(() => false);
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true, 
+        backgroundColor: Colors.pink,
+        body: FutureBuilder(
+          future: getCardDatas(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              roleController.text = snapshot.data!.role;
+              phoneController.text = snapshot.data!.phone;
+              mailController.text = snapshot.data!.mail;
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Image(
+                          image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              color: Colors.pink,
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15,
+                                  right: 15,
+                                  top: 5
+                                ),
+                                child: Column(
+                                  children:
+                                  [
+                                    CardFormEntryEdit(title: "Role", controller: roleController),
+                                    CardFormEntryEdit(title: "Phone", controller: phoneController, isPhone: true,),
+                                    CardFormEntryEdit(title: "Mail", controller: mailController, isMail: true,),
+                                  ]
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 60,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ElevatedButton(
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  fixedSize: const Size(120, 50),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(30))
+                            const SizedBox(
+                              height: 60,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    fixedSize: const Size(120, 50),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(30))
+                                    )
+                                  ),
+                                  onPressed: () => confirmCancel(context),
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      color: Colors.pink
+                                    ),
                                   )
                                 ),
-                                onPressed: () => confirmCancel(context),
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    fontSize: 25,
-                                    color: Colors.pink
+                                ElevatedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    fixedSize: const Size(120, 50),
+                                    side: const BorderSide(
+                                      color: Color.fromARGB(255, 255, 230, 0),
+                                      width: 7),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(30))
+                                    )
                                   ),
-                                )
-                              ),
-                              ElevatedButton(
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  fixedSize: const Size(120, 50),
-                                  side: const BorderSide(
-                                    color: Color.fromARGB(255, 255, 230, 0),
-                                    width: 7),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(30))
+                                  onPressed: () {
+                                    saveDatas().then((validation) {
+                                      if (validation){
+                                        Navigator.pop(context);
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => const AlertDialog(
+                                            elevation: 0,
+                                            content: Text(
+                                              "Can't save the datas",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            icon: Icon(Icons.signal_wifi_connected_no_internet_4_rounded),
+                                          )
+                                        );
+                                      }
+                                    });
+                                  } ,
+                                  child: const Text(
+                                    "Save",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      color: Colors.pink
+                                    ),
                                   )
-                                ),
-                                onPressed: () {
-                                  saveDatas().then((validation) {
-                                    if (validation){
-                                      Navigator.pop(context);
-                                    } else {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => const AlertDialog(
-                                          elevation: 0,
-                                          content: Text(
-                                            "Can't save the datas",
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          icon: Icon(Icons.signal_wifi_connected_no_internet_4_rounded),
-                                        )
-                                      );
-                                    }
-                                  });
-                                } ,
-                                child: const Text(
-                                  "Save",
-                                  style: TextStyle(
-                                    fontSize: 25,
-                                    color: Colors.pink
-                                  ),
                                 )
-                              )
-                            ],
-                          )
-                        ],
-                      )
-                    ],
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          } else {
-            return const Align(
-              alignment: Alignment.center,
-              child: SpinKitCubeGrid(
-                color: Colors.white,
-                size: 60,
-              ),
-            );
+              );
+            } else {
+              return const Align(
+                alignment: Alignment.center,
+                child: SpinKitCubeGrid(
+                  color: Colors.white,
+                  size: 60,
+                ),
+              );
+            }
           }
-        }
-      )
+        )
+      ),
     );
   }
 }

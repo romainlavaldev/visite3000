@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visite3000/globals.dart' as globals;
@@ -19,6 +20,8 @@ class CardDetails extends StatefulWidget{
 }
 
 class _CardDetailsState extends State<CardDetails> {
+
+  final _storage = const FlutterSecureStorage();
 
   Future<CardModel> getCardDatas() async {
     Map data = {'cardId': widget.cardId};
@@ -58,6 +61,24 @@ class _CardDetailsState extends State<CardDetails> {
     );
   }
 
+  Future<bool> deleteUserSubbedCard() async {
+    Map data = {'userId': await _storage.read(key: "UserId"), 'cardId': widget.cardId};
+
+    String body = jsonEncode(data);
+
+    
+    Response response = await http.post(
+      Uri.parse('${globals.serverEntryPoint}/db/delete_user_subbed_card.php'),
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    );
+
+    return response.statusCode == 200;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,21 +94,69 @@ class _CardDetailsState extends State<CardDetails> {
                   Image(
                     image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(
-                      top: 10,
-                      left: 10
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: IconButton(
+                            onPressed: () => Navigator.pop(context), 
+                            icon: const Icon(Icons.arrow_back),
+                            iconSize: 25,
+                          ),
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 255, 0, 0),
+                            borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context, 1);
+                            }, 
+                            icon: const Icon(Icons.work_history_outlined),
+                            color: Colors.white,
+                            iconSize: 25,
+                          ),
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 255, 0, 0),
+                            borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              deleteUserSubbedCard().then((validation) {
+                                if (validation) {
+                                  Navigator.pop(context, 1);
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const AlertDialog(
+                                      elevation: 0,
+                                      content: Text(
+                                        "Error, can't delete this card",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      icon: Icon(Icons.error_outline),
+                                    )
+                                  );
+                                }
+                              });
+                            }, 
+                            icon: const Icon(Icons.delete_forever),
+                            color: Colors.white,
+                            iconSize: 25,
+                          ),
+                        )
+                      ],
                     ),
-                    decoration: const BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                    ),
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context), 
-                      icon: const Icon(Icons.arrow_back),
-                      iconSize: 25,
-                    ),
-                  )
+                  ),
                 ],
               ),
               Container(

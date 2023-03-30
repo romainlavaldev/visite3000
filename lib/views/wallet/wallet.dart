@@ -41,13 +41,21 @@ class _WalletState extends State<Wallet>
       List<Widget> cards = <Widget>[];
 
       for (dynamic card in jsonData['datas'] ?? []) {
-        cards.add(SingleCard(int.parse(card['cardId']), card['phone'], card['mail']));
+        if (card['phone'] == null) card['phone'] = "";
+        if (card['mail'] == null) card['mail'] = "";
+        cards.add(SingleCard(int.parse(card['cardId']), card['phone'], card['mail'], refreshWallet: refresh,));
       }
 
       return cards;
     }
 
     return [];
+  }
+
+  void refresh() {
+    setState(() {
+      
+    });
   }
 
   @override
@@ -63,8 +71,7 @@ class _WalletState extends State<Wallet>
     return FutureBuilder(
       future: _getUserCards(),
       builder:(context, snapshot) {
-        if (snapshot.hasData) {
-
+        if (snapshot.connectionState == ConnectionState.done) {
           return snapshot.data!.isNotEmpty ?
             ListView(
             children: snapshot.data!.map((cardWidget) => 

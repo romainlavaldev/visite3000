@@ -13,17 +13,25 @@ class SingleCard extends StatefulWidget{
   final int _cardId;
   final String phone;
   final String mail;
-  const SingleCard(this._cardId, this.phone, this.mail, {super.key});
+  final Function refreshWallet;
+  const SingleCard(this._cardId, this.phone, this.mail, {super.key, required this.refreshWallet});
 
   @override
   State<SingleCard> createState() => _SingleCardState();
 }
 
-class _SingleCardState extends State<SingleCard> {
+class _SingleCardState extends State<SingleCard> with TickerProviderStateMixin{
   bool isSelected = false;
   double angle = 0;
 
   Image? cardImage;
+
+  late AnimationController deleteAnimController = AnimationController(
+    duration: const Duration(milliseconds: 950),
+    vsync: this,
+    lowerBound: 0,
+    upperBound: 1
+  );
 
   void flipCard(){
     setState(() {
@@ -57,6 +65,12 @@ class _SingleCardState extends State<SingleCard> {
   }
 
   @override
+  void dispose() {
+    deleteAnimController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: flipCard,
@@ -67,90 +81,106 @@ class _SingleCardState extends State<SingleCard> {
           return Transform(
             transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(Curves.easeInOutBack.transform(val / pi) * pi),
             alignment: Alignment.center,
-            child: Stack(
-              alignment: Alignment.center,
-              fit: StackFit.passthrough,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(
-                      sigmaX: val,
-                      sigmaY: val,
-                      tileMode: TileMode.mirror
+            child: AnimatedBuilder(
+              animation: deleteAnimController,
+              builder: (context, child) => Transform.scale(
+                scale: 1 - Curves.elasticIn.transform(deleteAnimController.value),
+                child: child,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                fit: StackFit.passthrough,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: ImageFiltered(
+                      imageFilter: ImageFilter.blur(
+                        sigmaX: val,
+                        sigmaY: val,
+                        tileMode: TileMode.mirror
+                      ),
+                      child: cardImage
                     ),
-                    child: cardImage
                   ),
-                ),
-                Opacity(
-                  opacity: computeControlButtonsOpacity(val),
-                  child: Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationY(pi),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.pink,
-                            shape: BoxShape.circle
-                          ),
-                          child: IconButton(
-                            padding: const EdgeInsets.all(15),
-                            iconSize: 40,
-                            icon: const Icon(
-                              Icons.phone,
-                              color: Colors.white
+                  Opacity(
+                    opacity: computeControlButtonsOpacity(val),
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(pi),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.pink,
+                              shape: BoxShape.circle
                             ),
-                            onPressed: () {isSelected ? callPhone(widget.phone) : flipCard();},
-                          ),
-                        ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.pink,
-                            shape: BoxShape.circle
-                          ),
-                          child: IconButton(
-                            padding: const EdgeInsets.all(15),
-                            iconSize: 40,
-                            icon: const Icon(
-                              Icons.mail,
-                              color: Colors.white
+                            child: IconButton(
+                              padding: const EdgeInsets.all(15),
+                              iconSize: 40,
+                              icon: const Icon(
+                                Icons.phone,
+                                color: Colors.white
+                              ),
+                              onPressed: () {isSelected ? callPhone(widget.phone) : flipCard();},
                             ),
-                            onPressed: () { isSelected ? sendMail(widget.mail) : flipCard();},
                           ),
-                        ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.pink,
-                            shape: BoxShape.circle
-                          ),
-                          child: IconButton(
-                            padding: const EdgeInsets.all(15),
-                            iconSize: 40,
-                            icon: const Icon(
-                              Icons.add,
-                              color: Colors.white
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.pink,
+                              shape: BoxShape.circle
                             ),
-                            onPressed: () {
-                              if (isSelected) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (builder) => CardDetails(cardId: widget._cardId)
-                                  )
-                                );
-                              } else {
-                                flipCard();
+                            child: IconButton(
+                              padding: const EdgeInsets.all(15),
+                              iconSize: 40,
+                              icon: const Icon(
+                                Icons.mail,
+                                color: Colors.white
+                              ),
+                              onPressed: () { isSelected ? sendMail(widget.mail) : flipCard();},
+                            ),
+                          ),
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.pink,
+                              shape: BoxShape.circle
+                            ),
+                            child: IconButton(
+                              padding: const EdgeInsets.all(15),
+                              iconSize: 40,
+                              icon: const Icon(
+                                Icons.add,
+                                color: Colors.white
+                              ),
+                              onPressed: () {
+                                if (isSelected) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (builder) => CardDetails(cardId: widget._cardId)
+                                    )
+                                  ).then((code) {
+                                    if (code == 1) {
+                                      deleteAnimController
+                                        .forward()
+                                        .whenComplete(() {
+                                          widget.refreshWallet();
+                                        }
+                                      );
+                                    }
+                                  });
+                                } else {
+                                  flipCard();
+                                }
                               }
-                            }
+                            )
                           )
-                        )
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             )
           );
         }

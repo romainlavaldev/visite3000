@@ -39,6 +39,7 @@ class _MyCardsState extends State<MyCards> {
       for (dynamic card in jsonData['datas']) {
         cards.add(MyCardTile(cardId: int.parse(card['id'])));
       }
+      cards.add(MyCardTile(cardId: int.parse("0"), isAddCard: true));
 
       return cards;
     }
@@ -70,7 +71,8 @@ class _MyCardsState extends State<MyCards> {
 
 class MyCardTile extends StatelessWidget{
   final int cardId;
-  const MyCardTile({super.key, required this.cardId});
+  final bool isAddCard;
+  const MyCardTile({super.key, required this.cardId, this.isAddCard = false});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +97,7 @@ class MyCardTile extends StatelessWidget{
                   color: Colors.yellow,
                   borderRadius: BorderRadius.all(Radius.circular(20))
                 ),
-                child: Row(
+                child: !isAddCard ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
@@ -118,7 +120,7 @@ class MyCardTile extends StatelessWidget{
                       )
                     )
                   ],
-                ),
+                ) : null,
               ),
             )
           ],

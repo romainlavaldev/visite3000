@@ -21,6 +21,7 @@ class _LayoutState extends State<Layout>
 
   final _storage = const FlutterSecureStorage();
   String selectedPageName = "";
+  bool reloadLayout = false;
 
   void _logOut(){
     _storage.deleteAll();
@@ -29,7 +30,21 @@ class _LayoutState extends State<Layout>
   }
 
   void _addCard(context){
-    Navigator.push(context, MaterialPageRoute(builder: (builder) => const Scanner()));
+    Navigator
+      .push(context, MaterialPageRoute(builder: (builder) => const Scanner()))
+      .then((value) {
+        if (value == 1) {
+          if (_selectedIndex != 0) {
+            setState(() {
+              _selectedIndex = 0;
+            });
+          } else {
+            setState(() {
+              reloadLayout = true;
+            });
+          }
+        }
+      });
   }
 
   final List<Widget> _pagesDestinationList = const [
@@ -55,6 +70,8 @@ class _LayoutState extends State<Layout>
 
   @override
   Widget build(BuildContext context) {
+    Widget page = reloadLayout ? Wallet() : _pagesDestinationList[_selectedIndex];
+    reloadLayout = false;
     return Scaffold(
       backgroundColor: Colors.pink,
       appBar: AppBar(
@@ -95,7 +112,31 @@ class _LayoutState extends State<Layout>
           )
         ],
       ),
-      body: _pagesDestinationList[_selectedIndex],
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+
+        int newIndex;
+          // Swipe left
+          if ((details.primaryVelocity ?? 0) < 0) {
+            if (_selectedIndex == _pagesDestinationList.length - 1) {
+              return;
+            }
+
+            newIndex = (_selectedIndex + 1);
+          } else {
+            if (_selectedIndex == 0) {
+              return;
+            }
+
+            newIndex = (_selectedIndex - 1);
+          }
+
+          setState(() {
+            _selectedIndex = newIndex;
+          });
+        },
+        child: page
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.pink,
         selectedItemColor: Colors.yellow,
