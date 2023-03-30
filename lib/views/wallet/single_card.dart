@@ -65,7 +65,7 @@ class _SingleCardState extends State<SingleCard> {
         duration: const Duration(milliseconds: 600),
         builder: (BuildContext context, double val, __){
           return Transform(
-            transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(Curves.easeInOut.transform(val / angle) * angle),
+            transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(Curves.easeInOutBack.transform(val / pi) * pi),
             alignment: Alignment.center,
             child: Stack(
               alignment: Alignment.center,
