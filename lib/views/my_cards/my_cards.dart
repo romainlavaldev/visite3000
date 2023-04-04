@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:visite3000/globals.dart' as globals;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:visite3000/views/my_cards/card_add.dart';
 import 'package:visite3000/views/my_cards/card_edit.dart';
 
 class MyCards extends StatefulWidget{
@@ -18,7 +19,7 @@ class MyCards extends StatefulWidget{
 class _MyCardsState extends State<MyCards> {
   final _storage = const FlutterSecureStorage();
 
-  Future<List<MyCardTile>> getUserCards() async {
+  Future<List<Widget>> getUserCards() async {
     Map data = {'userId': await _storage.read(key: "UserId")};
     String body = jsonEncode(data);
     
@@ -34,12 +35,19 @@ class _MyCardsState extends State<MyCards> {
     if (response.statusCode == 200){
       dynamic jsonData = json.decode(response.body);
 
-      List<MyCardTile> cards = <MyCardTile>[];
+      List<Widget> cards = <Widget>[];
 
       for (dynamic card in jsonData['datas']) {
         cards.add(MyCardTile(cardId: int.parse(card['id'])));
       }
-      cards.add(MyCardTile(cardId: int.parse("0"), isAddCard: true));
+      cards.add(
+        GestureDetector(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (builder) => const CardAdd()));
+          },
+          child: MyCardTile(cardId: int.parse("0"), isAddCard: true)
+        )
+      );
 
       return cards;
     }

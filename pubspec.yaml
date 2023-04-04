@@ -52,6 +52,8 @@ dependencies:
   mobile_scanner: ^3.1.1
   sensors: ^2.0.3
   settings_ui: ^2.0.2
+  image_picker: ^0.8.7+1
+  image_size_getter: ^2.1.2
 
 dev_dependencies:
   flutter_test:
