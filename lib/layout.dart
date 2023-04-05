@@ -103,7 +103,16 @@ class _LayoutState extends State<Layout>
         ],
       ),
       body: page,
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Color.fromARGB(120, 255, 255, 255),
+              width: 2
+            )
+          )
+        ),
+        child: BottomNavigationBar(
         backgroundColor: Colors.pink,
         selectedItemColor: Colors.yellow,
         unselectedItemColor: Colors.white,
@@ -126,6 +135,7 @@ class _LayoutState extends State<Layout>
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        )
       ),
     );
   }
