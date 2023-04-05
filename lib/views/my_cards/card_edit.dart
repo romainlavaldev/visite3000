@@ -112,6 +112,24 @@ class _CardEditState extends State<CardEdit> {
     );
   }
 
+  Future<bool> deleteCard() async {
+    Map data = {'cardId': widget.cardId};
+
+    String body = jsonEncode(data);
+
+    
+    Response response = await http.post(
+      Uri.parse('${globals.serverEntryPoint}/db/delete_card.php'),
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    );
+
+    return response.statusCode == 200;
+  }
+
   TextEditingController roleController = TextEditingController();
 
   TextEditingController phoneController = TextEditingController();
@@ -141,8 +159,61 @@ class _CardEditState extends State<CardEdit> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Image(
-                          image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
+                        Stack(
+                          children: [
+                            Image(
+                              image: NetworkImage("${globals.serverEntryPoint}/cards/${widget.cardId}.png"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.yellow,
+                                      borderRadius: BorderRadius.all(Radius.circular(20))
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () => Navigator.pop(context), 
+                                      icon: const Icon(Icons.arrow_back),
+                                      iconSize: 25,
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromARGB(255, 255, 0, 0),
+                                      borderRadius: BorderRadius.all(Radius.circular(20))
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        deleteCard().then((validation) {
+                                          if (validation) {
+                                            Navigator.pop(context, 1);
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => const AlertDialog(
+                                                elevation: 0,
+                                                content: Text(
+                                                  "Error, can't delete this card",
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                icon: Icon(Icons.error_outline),
+                                              )
+                                            );
+                                          }
+                                        });
+                                      }, 
+                                      icon: const Icon(Icons.delete_forever),
+                                      color: Colors.white,
+                                      iconSize: 25,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

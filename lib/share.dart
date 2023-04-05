@@ -42,10 +42,12 @@ class _ShareState extends State<Share>
 
       List<Tuple2<String, ShareCardTile>> cards = <Tuple2<String, ShareCardTile>>[];
 
-      for (dynamic card in jsonData['datas']) {
-        int cardId = int.parse(card['id']);
-        String shareCode = card['shareCode'];
-        cards.add(Tuple2(shareCode, ShareCardTile(cardId: cardId)));
+      if (jsonData['datas'] != null){
+        for (dynamic card in jsonData['datas']) {
+          int cardId = int.parse(card['id']);
+          String shareCode = card['shareCode'];
+          cards.add(Tuple2(shareCode, ShareCardTile(cardId: cardId)));
+        }
       }
 
       return cards;
@@ -125,7 +127,7 @@ class _ShareState extends State<Share>
                         ) : SizedBox(
                           width: 280,
                           height: 280,
-                          child: Column(
+                          child: snapshot.data!.isNotEmpty ?  Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
                               Icon(
@@ -142,6 +144,14 @@ class _ShareState extends State<Share>
                                 ),
                               )
                             ],
+                          ) : const Center(
+                            child: Text(
+                              "You don't have cards to share",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 25
+                              ),
+                            ),
                           ),
                         ),
                       )

@@ -25,13 +25,25 @@ class _CardAddState extends State<CardAdd> {
     image: NetworkImage("${globals.serverEntryPoint}/cards/0.png"),
   );
 
+  File? imageFile;
+
   Future<bool> addCard() async {
+
+    if (imageFile == null){
+      return false;
+    }
+
+    List<int> imageData = imageFile?.readAsBytesSync() as List<int>;
+
+    String baseImage = base64Encode(imageData);
+
+
     Map data = {
       'userId': await _storage.read(key: "UserId"),
       'role': roleController.text, 
       'phone': phoneController.text,
       'mail': mailController.text,
-      'image': ""
+      'image': baseImage
     };
     String body = jsonEncode(data);
     
@@ -91,17 +103,19 @@ class _CardAddState extends State<CardAdd> {
       return false;
     }
 
+    File imageFile = File(image.path);
     
-    final size = sizeGetter.ImageSizeGetter.getSize(FileInput(File(image.path)));
+    final size = sizeGetter.ImageSizeGetter.getSize(FileInput(imageFile));
 
     if (size.width != 448 || size.height != 268){
       return false;
     }
 
-    Image selectedImage = Image.file(File(image.path));
+    Image selectedImage = Image.file(imageFile);
 
     setState(() {
       this.image = selectedImage;
+      this.imageFile = imageFile;
     });
 
     return true;
@@ -207,7 +221,7 @@ class _CardAddState extends State<CardAdd> {
                             onPressed: () {
                               addCard().then((validation) {
                                 if (validation){
-                                  Navigator.pop(context);
+                                  Navigator.pop(context, 1);
                                 } else {
                                   showDialog(
                                     context: context,

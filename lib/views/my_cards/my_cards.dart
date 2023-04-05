@@ -37,15 +37,24 @@ class _MyCardsState extends State<MyCards> {
 
       List<Widget> cards = <Widget>[];
 
-      for (dynamic card in jsonData['datas']) {
-        cards.add(MyCardTile(cardId: int.parse(card['id'])));
+      if (jsonData['datas'] != null) {
+        for (dynamic card in jsonData['datas']) {
+          cards.add(MyCardTile(cardId: int.parse(card['id']), myCardRefresh: refresh));
+        }
       }
       cards.add(
         GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (builder) => const CardAdd()));
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (builder) => const CardAdd())
+            ).then((code) {
+              if (code == 1 ) { 
+                refresh();
+              }
+            });
           },
-          child: MyCardTile(cardId: int.parse("0"), isAddCard: true)
+          child: MyCardTile(cardId: int.parse("0"), isAddCard: true, myCardRefresh: refresh)
         )
       );
 
@@ -53,6 +62,12 @@ class _MyCardsState extends State<MyCards> {
     }
 
     return [];
+  }
+
+  void refresh(){
+    setState(() {
+      
+    });
   }
 
   @override
@@ -63,14 +78,23 @@ class _MyCardsState extends State<MyCards> {
       body: FutureBuilder(
         future: getUserCards(),
         builder: (context, snapshot) {
-          return snapshot.hasData ? ListView(
-            children: snapshot.data ?? [],
-          ) : const Center(
-            child: SpinKitCubeGrid(
-              color: Colors.white,
-              size: 60,
-            ),
-          );
+          if (snapshot.connectionState == ConnectionState.done) {
+            return snapshot.hasData ? ListView(
+              children: snapshot.data ?? [],
+            ) : const Center(
+              child: SpinKitCubeGrid(
+                color: Colors.white,
+                size: 60,
+              ),
+            );
+          } else {
+            return const Center(
+              child: SpinKitCubeGrid(
+                color: Colors.white,
+                size: 60,
+              ),
+            );
+          }
         },
       )
     );
@@ -80,7 +104,8 @@ class _MyCardsState extends State<MyCards> {
 class MyCardTile extends StatelessWidget{
   final int cardId;
   final bool isAddCard;
-  const MyCardTile({super.key, required this.cardId, this.isAddCard = false});
+  final Function myCardRefresh;
+  const MyCardTile({super.key, required this.cardId, required this.myCardRefresh, this.isAddCard = false});
 
   @override
   Widget build(BuildContext context) {
@@ -115,21 +140,14 @@ class MyCardTile extends StatelessWidget{
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      onPressed: (){},
-                      icon: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      )
-                    ),
-                    SizedBox(
-                      width: 1,
-                      height: 20,
-                      child: Container(
-                        color: Colors.white,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (builder) => CardEdit(cardId: cardId))),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (builder) => CardEdit(cardId: cardId))
+                      ).then((code) {
+                        if (code == 1 ) { 
+                          myCardRefresh();
+                        }
+                      }),
                       icon: const Icon(
                         Icons.edit,
                         color: Colors.white,
@@ -144,5 +162,4 @@ class MyCardTile extends StatelessWidget{
       ),
     );
   }
-
 }

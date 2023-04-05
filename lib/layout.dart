@@ -18,16 +18,8 @@ class Layout extends StatefulWidget
 
 class _LayoutState extends State<Layout>
 {
-
-  final _storage = const FlutterSecureStorage();
   String selectedPageName = "";
   bool reloadLayout = false;
-
-  void _logOut(){
-    _storage.deleteAll();
-
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const MyApp()));
-  }
 
   void _addCard(context){
     Navigator
@@ -102,15 +94,6 @@ class _LayoutState extends State<Layout>
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
-              onTap: _logOut,
-              child: const Icon(
-                Icons.power_settings_new_outlined
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: GestureDetector(
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (builder) => const Settings())),
               child: const Icon(
                 Icons.settings
@@ -119,31 +102,7 @@ class _LayoutState extends State<Layout>
           )
         ],
       ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-
-        int newIndex;
-          // Swipe left
-          if ((details.primaryVelocity ?? 0) < 0) {
-            if (_selectedIndex == _pagesDestinationList.length - 1) {
-              return;
-            }
-
-            newIndex = (_selectedIndex + 1);
-          } else {
-            if (_selectedIndex == 0) {
-              return;
-            }
-
-            newIndex = (_selectedIndex - 1);
-          }
-
-          setState(() {
-            _selectedIndex = newIndex;
-          });
-        },
-        child: page
-      ),
+      body: page,
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.pink,
         selectedItemColor: Colors.yellow,

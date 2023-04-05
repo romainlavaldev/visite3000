@@ -1,8 +1,13 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:http/http.dart' as http;
+
+import 'globals.dart' as globals;
 
 import 'package:visite3000/main.dart';
 
@@ -23,8 +28,28 @@ class _SettingsState extends State<Settings>{
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const MyApp()));
   }
 
-  void _disconnectAllAccount(){
+  Future<bool> _disconnectAllAccount() async {
+    
+    Map data = {
+      'userId': await _storage.read(key: "UserId"),
+    };
+    String body = jsonEncode(data);
+    
+    Response response = await http.post(
+      Uri.parse('${globals.serverEntryPoint}/db/reset_token.php'),
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    );
 
+    if (response.statusCode == 200){
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   @override
@@ -49,7 +74,12 @@ class _SettingsState extends State<Settings>{
                 title: const Text('Disconnect all accounts'),
                 leading: const Icon(Icons.delete),
                 onPressed: (BuildContext context) {
-                  _disconnectAllAccount();
+                  _disconnectAllAccount().then((validation) {
+                    if (validation) {
+                      _storage.deleteAll();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => const MyApp()));
+                    }
+                  });
                 },
               ),
             ],

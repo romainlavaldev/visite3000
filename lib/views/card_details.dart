@@ -117,20 +117,6 @@ class _CardDetailsState extends State<CardDetails> {
                           ),
                           child: IconButton(
                             onPressed: () {
-                              Navigator.pop(context, 1);
-                            }, 
-                            icon: const Icon(Icons.work_history_outlined),
-                            color: Colors.white,
-                            iconSize: 25,
-                          ),
-                        ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 255, 0, 0),
-                            borderRadius: BorderRadius.all(Radius.circular(20))
-                          ),
-                          child: IconButton(
-                            onPressed: () {
                               deleteUserSubbedCard().then((validation) {
                                 if (validation) {
                                   Navigator.pop(context, 1);
